@@ -1,61 +1,57 @@
-import H3 from '@material-tailwind/react/Heading3';
-import Paragraph from '@material-tailwind/react/Paragraph';
 import { useState } from 'react';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 
 
-export default function Question() {
+export default function MilkQuestion() {
     const [openHidden, setOpenHidden] = useState(false);
     const [openHidden1, setOpenHidden1] = useState(false);
     const [openHidden2, setOpenHidden2] = useState(false);
     const [openHidden3, setOpenHidden3] = useState(false);
     const [openHidden4, setOpenHidden4] = useState(false);
     return (
-        <div className="flex flex-wrap justify-center mt-24">
+        <div className="flex flex-wrap justify-center ">
             <div className="w-full lg:w-8/12 px-4">
                 <div className="relative flex flex-col min-w-0 break-words w-full mb-6">
                     <div className="flex-auto p-5 lg:p-10">
-                        <div className="w-full text-center">
-                            <H3 color="gray">FREQUENTLY ASKED QUESTIONS?</H3>
-                            <Paragraph color="blueGray">
-                                INFORMATION QUESTIONS
-                            </Paragraph>
+                        <div className=" w-full text-left mb-5 text-2xl font-serif">
+                           Milk
                         </div>
                         <div className='border-b-2 border-t-2 cursor-pointer w-full py-4'>
                             <div onClick={() => setOpenHidden(!openHidden)}>
-                                <i className='text-lg font-bold'>Will I receive the same product that I see in the picture?</i>
+                                <i className='text-base font-bold'>What is the delivery charge for online orders?</i>
                                  {openHidden == false ? <ArrowDropDownIcon className="" /> : <ArrowDropUpIcon className="" />} 
                             </div>
-                            <p className={ openHidden == false ? "text-gray-500  mt-2 hidden" : "text-gray-500  mt-2"}>Yes. We only display our actual product along with our packaging. Hence, you get what you see on the site.</p>
+                            <p className={ openHidden == false ? "text-gray-500 text-sm mt-2 hidden" : "text-gray-500 text-sm mt-2"}>All our orders are delivered FREE of cost. We do not charge any delivery charges for any of our orders whatsoever.</p>
                         </div>
                         <div className='border-b-2  cursor-pointer w-full py-4'>
                             <div onClick={() => setOpenHidden1(!openHidden1)}>
-                                <i className='text-lg font-bold'>Where can I view my sales receipt?</i>
+                                <i className='text-base font-bold'>How do we know that the product is Fresh and Pure?</i>
                                  {openHidden1 == false ? <ArrowDropDownIcon className="" /> : <ArrowDropUpIcon className="" />} 
                             </div>
-                            <p className={ openHidden1 == false ? "text-gray-500  mt-2 hidden" : "text-gray-500  mt-2"}>After every payment, an invoice is sent to your e-mail ID. You can find your invoice in the registered email for each and every payment.</p>
+                            <p className={ openHidden1 == false ? "text-gray-500 text-sm mt-2 hidden" : "text-gray-500 text-sm mt-2"}>There are various parameters for checking the quality of milk on different levels. Our milk goes through strict quality checks on high tech machines on a regular basis. It is uploaded regularly on our site so that you know what you consume. To make you understand better-detailed guide to it is present in the blog section or click here.</p>
                         </div>
                         <div className='border-b-2  cursor-pointer w-full py-4'>
                             <div onClick={() => setOpenHidden2(!openHidden2)}>
-                                <i className='text-lg font-bold'>How can I return an item?</i>
+                                <i className='text-base font-bold'>Is the Milk Pasteurised?</i>
                                  {openHidden2 == false ? <ArrowDropDownIcon className="" /> : <ArrowDropUpIcon className="" />} 
                             </div>
-                            <p className={ openHidden2 == false ? "text-gray-500  mt-2 hidden" : "text-gray-500  mt-2"}>We only accept returns only if the wrong product is delivered or if the product which you receive is found the seal to be tempered or broken while the delivery executive is at your place. So, please check the seal and the product which accepting it from the delivery executive.</p>
+                            <p className={ openHidden2 == false ? "text-gray-500 text-sm mt-2 hidden" : "text-gray-500 text-sm mt-2"}>FarmlyFresh milk is raw, unpasteurized milk. We don’t process the milk – thus providing purest and freshest form of milk to our patrons.</p>
                         </div>
                         <div className='border-b-2  cursor-pointer w-full py-4'>
                             <div onClick={() => setOpenHidden3(!openHidden3)}>
-                                <i className='text-lg font-bold'>Will you restock items indicated as “out of stock?"</i>
+                                <i className='text-base font-bold'>Can I buy products directly form FarmlyFresh outlet?</i>
                                  {openHidden3 == false ? <ArrowDropDownIcon className="" /> : <ArrowDropUpIcon className="" />} 
                             </div>
-                            <p className={ openHidden3 == false ? "text-gray-500  mt-2 hidden" : "text-gray-500  mt-2"}>Almost all of our products are always available. However, in case any product goes out of stock we would restock it as soon as possible and most likely within 12 hours.</p>
+                            <p className={ openHidden3 == false ? "text-gray-500 text-sm mt-2 hidden" : "text-gray-500 text-sm mt-2"}>No, we don’t sell products from any outlets whatsoever. We only have one office where we do our operations.</p>
                         </div>
                         <div className='border-b-2  cursor-pointer w-full py-4'>
                             <div onClick={() => setOpenHidden4(!openHidden4)}>
-                                <i className='text-lg font-bold'>Where can I ship my order?</i>
+                                <i className='text-base font-bold'>What varieties of milk do you supply?</i>
                                  {openHidden4 == false ? <ArrowDropDownIcon className="" /> : <ArrowDropUpIcon className="" />} 
                             </div>
-                            <p className={ openHidden4 == false ? "text-gray-500  mt-2 hidden" : "text-gray-500  mt-2"}>Currently, our service areas are limited to certain parts of Guwahati. We would like to assure you that in a short period our service would cover the entire Guwahati.</p>
+                            <p className={ openHidden4 == false ? "text-gray-500 text-sm mt-2 hidden" : "text-gray-500 text-sm mt-2"}>We only deal with whole milk that is raw and unprocessed. We do not have other variants such as full cream, toned, double toned and so on.</p>
+                            <p className={ openHidden4 == false ? "text-gray-500 text-sm mt-2 hidden" : "text-gray-500 text-sm mt-2"}>We deliver the way the milk is extracted.</p>
                         </div>
                     </div>
                 </div>

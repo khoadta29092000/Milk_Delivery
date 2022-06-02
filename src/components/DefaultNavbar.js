@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { React, useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '@material-tailwind/react/Navbar';
 import NavbarContainer from '@material-tailwind/react/NavbarContainer';
@@ -11,26 +11,176 @@ import NavLink from '@material-tailwind/react/NavLink';
 import Dropdown from '@material-tailwind/react/Dropdown';
 import DropdownItem from '@material-tailwind/react/DropdownItem';
 import Icon from '@material-tailwind/react/Icon';
-import Button from '@material-tailwind/react/Button';
+import Button1 from '@material-tailwind/react/Button';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 import SearchIcon from '@mui/icons-material/Search';
 import Paper from '@mui/material/Paper';
 import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import MenuItem from '@mui/material/MenuItem';
+import MenuList from '@mui/material/MenuList';
+import Popper from '@mui/material/Popper';
+import ClickAwayListener from '@mui/material/ClickAwayListener';
+import Grow from '@mui/material/Grow';
+import Avatar from '@mui/material/Avatar';
+import Stack from '@mui/material/Stack';
+import { Typography } from '@mui/material';
 
 
 
 
 export default function DefaultNavbar() {
+    const [open, setOpen] = useState(false);
+    const anchorRef = useRef(null);
+
+    const handleToggle = () => {
+        setOpen((prevOpen) => !prevOpen);
+    };
+
+    const handleClose = (event) => {
+        if (anchorRef.current && anchorRef.current.contains(event.target)) {
+            return;
+        }
+
+        setOpen(false);
+    };
+    function handleListKeyDown(event) {
+        if (event.key === 'Tab') {
+            event.preventDefault();
+            setOpen(false);
+        } else if (event.key === 'Escape') {
+            setOpen(false);
+        }
+    }
+    function handleLogoutClick() {
+        localStorage.removeItem('user-token');
+        window.location.reload();
+    }
+
+    // return focus to the button when we transitioned from !open -> open
+    const prevOpen = useRef(open);
+    useEffect(() => {
+        if (prevOpen.current === true && open === false) {
+            anchorRef.current.focus();
+        }
+
+        prevOpen.current = open;
+    }, [open]);
     const [openNavbar, setOpenNavbar] = useState(false);
+    let adminDashboard;
+    let buttonSignIn;
+    let buttonSingUp;
+    let avatar;
+    if (localStorage.getItem(`user-token`)) {
+        avatar = (
+            <div>
+                <Button1
+                    ref={anchorRef}
+                    id="composition-button"
+                    aria-controls={open ? 'composition-menu' : undefined}
+                    aria-expanded={open ? 'true' : undefined}
+                    aria-haspopup="true"
+                    onClick={handleToggle}
+                    color="transparent"
+                    className=" text-white ml-2"
+                    ripple="dark"
+                >
+                    <Stack direction="row" spacing={2}>
+                        <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
+                    </Stack>
+                    <Typography color="White" className='pl-2'>Anh Khoa</Typography>
+                </Button1>
+                <Popper
+                    open={open}
+                    anchorEl={anchorRef.current}
+                    role={undefined}
+                    placement="bottom-start"
+                    transition
+                    disablePortal
+                >
+                    {({ TransitionProps, placement }) => (
+                        <Grow
+                            {...TransitionProps}
+                            style={{
+                                transformOrigin:
+                                    placement === 'bottom-start' ? 'left top' : 'left bottom',
+                            }}
+                        >
+                            <Paper>
+                                <ClickAwayListener onClickAway={handleClose}>
+                                    <MenuList
+                                        autoFocusItem={open}
+                                        id="composition-menu"
+                                        aria-labelledby="composition-button"
+                                        onKeyDown={handleListKeyDown}
+                                    >
+                                        <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                        <MenuItem onClick={handleClose}>Subscription</MenuItem>
+                                        <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
+                                    </MenuList>
+                                </ClickAwayListener>
+                            </Paper>
+                        </Grow>
+                    )}
+                </Popper>
+            </div>
+        )
+    } else {
+
+        buttonSignIn = (
+            <Link
+                to="/login"
+
+                rel="noreferrer"
+            >
+                <Button1
+                    color="transparent"
+                    className=" text-white ml-2"
+                    ripple="dark"
+                >
+                    Sing In
+                </Button1>
+            </Link>
+        )
+        buttonSingUp = (
+            <Link
+                to="/register"
+                rel="noreferrer"
+            >
+                <Button1
+                    color="lightBlue"
+                    className="bg-white mt-5 lg:mt-0 text-black ml-2"
+                    ripple="dark"
+                >
+                    Sing Up
+                </Button1>
+            </Link>
+        )
+    }
+    if (localStorage.getItem(`user-token`)) {
+        adminDashboard = (
+            <Link to="/Subscription">
+                <NavLink
+                    rel="noreferrer"
+                    ripple="light"
+                >
+                    <DashboardIcon
+
+                        size="xl"
+                    />
+                    &nbsp;Admin Dashboard
+                </NavLink>
+            </Link>
+        )
+    }
 
     return (
         <Navbar color="transparent" className="w-full" navbar>
             <NavbarContainer>
                 <NavbarWrapper>
-               
-                        <NavbarBrand>Material Tailwind</NavbarBrand>
+
+                    <NavbarBrand>Material Tailwind</NavbarBrand>
 
                     <NavbarToggler
                         onClick={() => setOpenNavbar(!openNavbar)}
@@ -40,6 +190,7 @@ export default function DefaultNavbar() {
 
                 <NavbarCollapse open={openNavbar}>
                     <Nav>
+                        {adminDashboard}
                         <div className="flex flex-col lg:flex-row lg:items-center">
                             <Link to="/">
                                 <NavLink
@@ -89,18 +240,7 @@ export default function DefaultNavbar() {
 
                                 </Dropdown>
                             </div>
-                            <Link to="/Subscription">
-                                <NavLink
-                                    rel="noreferrer"
-                                    ripple="light"
-                                >
-                                    <SubscriptionsIcon
 
-                                        size="xl"
-                                    />
-                                    &nbsp;Subscription
-                                </NavLink>
-                            </Link>
                             <Link to="/ServiceAreas">
                                 <NavLink
 
@@ -112,7 +252,7 @@ export default function DefaultNavbar() {
                                     <div className="">Areas</div>
                                 </NavLink>
                             </Link>
-                            <div className="text-white">
+                            <div className="text-white mr-5">
                                 <Dropdown
                                     color="transparent"
                                     size="sm"
@@ -126,17 +266,13 @@ export default function DefaultNavbar() {
                                     }
                                     ripple="light"
                                 >
-                                    <Link to="/Product">
-                                        <DropdownItem color="lightBlue">
-                                            Blogs
-                                        </DropdownItem>
-                                    </Link>
+
                                     <Link to="/ContractUs">
                                         <DropdownItem color="lightBlue">
                                             Contract Us
                                         </DropdownItem>
                                     </Link>
-                                    <Link to="/Product">
+                                    <Link to="/FAQs">
                                         <DropdownItem color="lightBlue">
                                             FAQs
                                         </DropdownItem>
@@ -170,31 +306,11 @@ export default function DefaultNavbar() {
 
                                 </Paper>
                             </Dropdown>
-                            <Link
-                                to="/login"
+                            {buttonSignIn}
+                            {buttonSingUp}
+                            {avatar}
 
-                                rel="noreferrer"
-                            >
-                                <Button
-                                    color="transparent"
-                                    className=" text-white ml-2"
-                                    ripple="dark"
-                                >
-                                    Sing In
-                                </Button>
-                            </Link>
-                            <Link
-                                to="/register"
-                                rel="noreferrer"
-                            >
-                                <Button
-                                    color="lightBlue"
-                                    className="bg-white mt-5 lg:mt-0 text-black ml-2"
-                                    ripple="dark"
-                                >
-                                    Sing Up
-                                </Button>
-                            </Link>
+
                         </div>
                     </Nav>
                 </NavbarCollapse>

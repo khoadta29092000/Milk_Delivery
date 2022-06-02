@@ -22,13 +22,10 @@ export default function WorkingSection() {
         { id: 8, title: "Fresh milk", price: "200.000", decription: "Fresh milk from the farm has a shelf life of 2 or 3 days", category: "Milk", image1: "https://www.farmlyfresh.com/wp-content/uploads/2020/05/milk-buy-trail.png", image2: "https://www.farmlyfresh.com/wp-content/uploads/2020/04/milk-grid-h.jpg" },];
     useEffect(() => {
         featchProductList();
-    }, [dataProducts]);
+    }, []);
     async function featchProductList() {
         try {
-
-
             setDataProduct(data);
-
             return data
         } catch (error) {
             console.log('Fail to fetch product list: ', error)

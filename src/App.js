@@ -7,6 +7,7 @@ import Aboutus from 'pages/Aboutus';
 import ServiceAreas from 'pages/ServiceAreas';
 import CustomizedInputBase from 'components/TextComponen';  
 import ContractUs from 'pages/ContractUs';
+import FAQs from 'pages/FAQs';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 
@@ -18,6 +19,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'assets/styles/tailwind.css';
 
 
+
 function App() {
     return (
         <Switch>
@@ -27,8 +29,9 @@ function App() {
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/register" component={Register} />
-            <Route exact path="/text" component={CustomizedInputBase} />\
+            <Route exact path="/text" component={CustomizedInputBase} />
             <Route exact path="/ContractUs" component={ContractUs} />
+            <Route exact path="/FAQs" component={FAQs} />
             <Redirect from="*" to="/" />
         </Switch>
     );

@@ -13,8 +13,14 @@ import Container from 'components/login/Container';
 import Stack from '@mui/material/Stack';
 import ButtonGoogle from '@mui/material/Button';
 import GoogleIcon from '@mui/icons-material/Google';
+import { useHistory } from 'react-router-dom';
 
 export default function Login() {
+    const history = useHistory();
+    async function loginIn() {
+                    localStorage.setItem("user-token", "b");
+                    history.push("/")
+    }
     return (
         <Page>
             <DefaultNavbar />
@@ -59,18 +65,19 @@ export default function Login() {
                                 buttonType="link"
                                 size="lg"
                                 ripple="dark"
+                                onClick={loginIn}
                             >
                                 Get Started
                             </Button>
                         </div>
                     </CardFooter>
-                    <div className='flex font-light text-blue-600 justify-center -mt-5 mb-2 bg-bb '>     
+                    <div color='' className='flex text-blue-800 font-light justify-center -mt-5 mb-2 bg-bb '>     
                     OR
                     </div>
                     <div className='flex  justify-center bg-bb '>     
                     <Stack direction="row" spacing={2}>
-                        <ButtonGoogle variant="outlined" startIcon={<GoogleIcon />}>
-                            Login With Goole
+                        <ButtonGoogle   variant="outlined" startIcon={<GoogleIcon />}>
+                            <div className='pt-1'>Login With Goole</div>
                         </ButtonGoogle>            
                     </Stack>
                     </div>

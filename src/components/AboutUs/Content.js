@@ -1,5 +1,3 @@
-import CardMedia from '@mui/material/CardMedia';
-
 
 export default function Content() {
     return (
