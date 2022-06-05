@@ -9,7 +9,7 @@ import CustomizedInputBase from 'components/TextComponen';
 import ContractUs from 'pages/ContractUs';
 import FAQs from 'pages/FAQs';
 import "slick-carousel/slick/slick.css"; 
-import "slick-carousel/slick/slick-theme.css";
+//import "slick-carousel/slick/slick-theme.css";
 
 
 // Font Awesome Style Sheet
@@ -17,6 +17,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 
 // Tailwind CSS Style Sheet
 import 'assets/styles/tailwind.css';
+import AdminDashboard from 'pages/AdminDashboard';
 
 
 
@@ -32,6 +33,7 @@ function App() {
             <Route exact path="/text" component={CustomizedInputBase} />
             <Route exact path="/ContractUs" component={ContractUs} />
             <Route exact path="/FAQs" component={FAQs} />
+            <Route exact path="/Admindashboard" component={AdminDashboard} />
             <Redirect from="*" to="/" />
         </Switch>
     );

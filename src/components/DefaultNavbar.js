@@ -115,7 +115,18 @@ export default function DefaultNavbar() {
                                         aria-labelledby="composition-button"
                                         onKeyDown={handleListKeyDown}
                                     >
-                                        <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                        <MenuItem >
+                                        <Link to="/profile">
+                                        Dashboard
+                                        </Link>
+                                        </MenuItem>
+                                        <MenuItem >
+                                        <Link to="/profile">
+                                        Profile
+                                        </Link>
+                                        </MenuItem>
+                                        <MenuItem onClick={handleClose}>Change Password</MenuItem>
+                                        <MenuItem onClick={handleClose}>My Address</MenuItem>
                                         <MenuItem onClick={handleClose}>Subscription</MenuItem>
                                         <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
                                     </MenuList>
@@ -160,7 +171,7 @@ export default function DefaultNavbar() {
     }
     if (localStorage.getItem(`user-token`)) {
         adminDashboard = (
-            <Link to="/Subscription">
+            <Link to="/Admindashboard">
                 <NavLink
                     rel="noreferrer"
                     ripple="light"
@@ -176,13 +187,14 @@ export default function DefaultNavbar() {
     }
 
     return (
-        <Navbar color="transparent" className="w-full" navbar>
+        <Navbar color="transparent"  navbar>
             <NavbarContainer>
                 <NavbarWrapper>
 
-                    <NavbarBrand>Material Tailwind</NavbarBrand>
+                    <NavbarBrand className="h-full">Material Tailwind</NavbarBrand>
 
                     <NavbarToggler
+                        className="hidden"
                         onClick={() => setOpenNavbar(!openNavbar)}
                         color="white"
                     />

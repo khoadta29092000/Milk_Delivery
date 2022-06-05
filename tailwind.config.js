@@ -10,7 +10,8 @@ module.exports = {
         },
         extend: {
             colors: {
-                'xanh': 'rgb(0,208,130) 100%)',
+                'lightblue2': '#005B88',
+                'lightblue1': '#B2E5FF',
               },
             backgroundImage: () => ({
                 'login-background':
