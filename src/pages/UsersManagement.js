@@ -1,12 +1,13 @@
+
 import Header from 'components/DefaultHeaderDashboard';
-import Content from 'components/Admindashboard/Content';
+import Content from 'components/UsersManagement/Content';
 import DefaultNavbarAdmin from 'components/DefaultNavbarAdmin';
 import { React, useState, } from 'react';
 import Modal from '@mui/material/Modal';
 import DefaultFooterDashboard from 'components/DefaultFooterDashboard';
 
 
-export default function AdminDashboard() {
+export default function UsersManagement() {
     const [openNav, setOpenNav] = useState(false);
     const handleClose = () => setOpenNav(false);
 
@@ -31,22 +32,22 @@ export default function AdminDashboard() {
 
     return (
         <>
-            <div className=' grid  grid-cols-12'>
-                <div className=" invisible xl:visible absolute w-64  z-20 bg-lightblue2">
+            <div className=' grid grid-cols-12'>
+                <div className=" invisible xl:visible absolute w-64 z-20  bg-lightblue2">
                     <DefaultNavbarAdmin className="" />
                     {modal}
                 </div>
-                <main className="ml-0 mb-0 bg-gray-100 w-screen overflow-y-scroll  h-screen ">
-                    <div className='absolute z-0'>
+                <main className="ml-0 mb-0 bg-gray-100  w-screen overflow-y-auto h-screen ">
+                    <div className='absolute   z-10'>
                         <Header parentCallback={callbackFunction} className="" />
                     </div>
-                    <div className=' z-10 mb-20 '>
-                       <Content />
+                    <div className='mb-12'>
+                        <Content />
                     </div>
-                    <DefaultFooterDashboard />
+                    <DefaultFooterDashboard
+              />
                 </main>
             </div>
-            
         </>
     );
 }

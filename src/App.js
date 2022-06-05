@@ -18,6 +18,7 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 // Tailwind CSS Style Sheet
 import 'assets/styles/tailwind.css';
 import AdminDashboard from 'pages/AdminDashboard';
+import UsersManagement from 'pages/UsersManagement';
 
 
 
@@ -30,10 +31,11 @@ function App() {
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/register" component={Register} />
-            <Route exact path="/text" component={CustomizedInputBase} />
             <Route exact path="/ContractUs" component={ContractUs} />
             <Route exact path="/FAQs" component={FAQs} />
             <Route exact path="/Admindashboard" component={AdminDashboard} />
+            <Route exact path="/UsersManagement" component={UsersManagement} />
+            <Route exact path="/text" component={CustomizedInputBase} />
             <Redirect from="*" to="/" />
         </Switch>
     );

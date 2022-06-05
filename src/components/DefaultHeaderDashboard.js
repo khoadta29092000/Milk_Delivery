@@ -66,7 +66,7 @@ export default function Header(props) {
         prevOpen.current = open;
     }, [open]);
     return (
-        <div className="bg-lightblue2 text-white  fixed  w-screen ">
+        <div className="bg-lightblue2 text-white fixed  w-screen ">
             <div className={' visible xl:invisible absolute   ml-5 pt-3   font-bold text-3xl'}>
                 <MenuIcon onClick={handleOpenNav} />
             </div>

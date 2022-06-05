@@ -14,11 +14,11 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 
 
 const columns = [
-  { id: 'Email', label: "Email", minWidth: 100 },
+  { id: 'Email', label: "Email", minWidth: 150 },
   {
     id: 'FullName',
     label: 'FullName',
-    minWidth: 100,
+    minWidth: 150,
     align: '',
   },
   {
@@ -118,8 +118,8 @@ export default function Content() {
   ];
 
   return (
-    <section className=" ml-0 xl:ml-64   pt-10  ">
-        <Paper className='mt-24' sx={{ width: '100%', overflow: 'hidden' }}>
+    <section className=" ml-0 xl:ml-64  px-5 pt-10  ">
+        <Paper className='mt-24 ' sx={{ width: '100%', overflow: 'hidden' }}>
       <TableHead >
         <div className='pt-2 pl-4 block font-semibold text-xl'>
           Users Management
@@ -142,9 +142,9 @@ export default function Content() {
 
         </Paper>
       </div>
-      <TableContainer sx={{ maxHeight: 440 }}>
+      <TableContainer sx={{ }}>
         <Table stickyHeader aria-label="sticky table">
-          <TableHead>
+          <TableHead className='z-0'>
             <TableRow>
               {columns.map((column) => (
                 <TableCell
@@ -169,7 +169,7 @@ export default function Content() {
 
 
                       return (
-                        <TableCell key={column.id} align={column.align}>
+                        <TableCell key={column.id} >
                           {value}
                         </TableCell>
                       );
