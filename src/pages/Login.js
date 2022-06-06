@@ -14,13 +14,21 @@ import Stack from '@mui/material/Stack';
 import ButtonGoogle from '@mui/material/Button';
 import GoogleIcon from '@mui/icons-material/Google';
 import { useHistory } from 'react-router-dom';
+import { GoogleLogin } from 'react-google-login';
 
 export default function Login() {
     const history = useHistory();
     async function loginIn() {
-                    localStorage.setItem("user-token", "b");
-                    history.push("/")
+        localStorage.setItem("user-token", "b");
+        history.push("/")
     }
+    const loginGoogle = async (token) => {
+        console.log("token gooleapi", token)
+        localStorage.setItem("user-token", "b");
+        history.push("/")
+    }
+
+
     return (
         <Page>
             <DefaultNavbar />
@@ -71,17 +79,33 @@ export default function Login() {
                             </Button>
                         </div>
                     </CardFooter>
-                    <div color='' className='flex text-blue-800 font-light justify-center -mt-5 mb-2 bg-bb '>     
-                    OR
+                    <div color='' className='flex text-blue-800 font-light justify-center -mt-5 mb-2 bg-bb '>
+                        OR
                     </div>
-                    <div className='flex  justify-center bg-bb '>     
-                    <Stack direction="row" spacing={2}>
-                        <ButtonGoogle   variant="outlined" startIcon={<GoogleIcon />}>
-                            <div className='pt-1'>Login With Goole</div>
-                        </ButtonGoogle>            
-                    </Stack>
+                    <div className='flex  justify-center bg-bb '>
+                        <Stack direction="row" spacing={2}>
+                            <GoogleLogin
+
+                                className="w-7/10 "
+                                clientId="1039209918487-4u4orng4ii1m9csn6ocn8jmav6aoq0bc.apps.googleusercontent.com"
+                                buttonText="Login with Gmail"
+                                onSuccess={(data) => {
+                                    if (data?.tokenObj?.id_token) {
+                                        loginGoogle(data?.tokenObj?.id_token)
+                                    } else {
+                                        alert('Login Error')
+                                    }
+                                }}
+                                onFailure={() => {
+                                    alert('Login Error')
+                                }}
+                                cookiePolicy={'single_host_origin'}
+                            ></GoogleLogin>
+
+                        </Stack>
+
                     </div>
-                    
+
                 </Card>
             </Container>
             <SimpleFooter />

@@ -11,9 +11,10 @@ import ClickAwayListener from '@mui/material/ClickAwayListener';
 import { Link } from 'react-router-dom';
 import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';
+import { useHistory } from 'react-router-dom';
 
 export default function Header(props) {
- 
+    const history = useHistory();
     const [openNav, setOpenNav] = useState(false);
     useEffect(() => {
         setOpenNav(props.dataOpenNav);
@@ -54,7 +55,8 @@ export default function Header(props) {
     }
     function handleLogoutClick() {
         localStorage.removeItem('user-token');
-        window.location.reload();
+        history.push("/");
+
     }
 
     // return focus to the button when we transitioned from !open -> open

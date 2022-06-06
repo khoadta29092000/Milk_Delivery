@@ -26,6 +26,7 @@ import Grow from '@mui/material/Grow';
 import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import { Typography } from '@mui/material';
+import logo from "../assets/img/logo.png"
 
 
 
@@ -191,7 +192,7 @@ export default function DefaultNavbar() {
             <NavbarContainer>
                 <NavbarWrapper>
 
-                    <NavbarBrand className="h-full">Material Tailwind</NavbarBrand>
+                    <NavbarBrand className=""><h2 className='h-full text-2xl tracking-widest'>FBT</h2></NavbarBrand>
 
                     <NavbarToggler
                         className="hidden"
