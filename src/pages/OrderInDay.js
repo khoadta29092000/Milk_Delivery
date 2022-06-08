@@ -1,18 +1,13 @@
+
 import Header from 'components/DefaultHeaderDashboard';
-import Content from 'components/AreasManagement/Content';
+import Content from 'components/OrderInDay/Content';
 import DefaultNavbarAdmin from 'components/DefaultNavbarAdmin';
 import { React, useState, } from 'react';
 import Modal from '@mui/material/Modal';
 import DefaultFooterDashboard from 'components/DefaultFooterDashboard';
-import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import { Link } from 'react-router-dom';
-function handleClick(event) {
-    event.preventDefault();
-    console.info('You clicked a breadcrumb.');
-  }
 
-export default function AreasManagement() {
+
+export default function OrderInDay() {
     const [openNav, setOpenNav] = useState(false);
     const handleClose = () => setOpenNav(false);
 
@@ -37,7 +32,7 @@ export default function AreasManagement() {
 
     return (
         <>
-              <div className=' grid grid-cols-12'>
+            <div className=' grid grid-cols-12'>
                 <div className=" invisible xl:visible absolute w-64 z-20  bg-lightblue2">
                     <DefaultNavbarAdmin className="" />
                     {modal}
@@ -46,21 +41,13 @@ export default function AreasManagement() {
                     <div className='absolute   z-10'>
                         <Header parentCallback={callbackFunction} className="" />
                     </div>
-                    <div className='  ml-0 xl:ml-64  mt-28 text-white ' role="presentation" onClick={handleClick}>
-                        <Breadcrumbs className='pl-5' aria-label="breadcrumb">
-                            <Link underline="hover" className='hover:underline' to="/" color="inherit" >
-                                Home
-                            </Link>
-                            <Typography color="text.primary">Areas</Typography>
-                        </Breadcrumbs>
-                    </div>
                     <div className='mb-12'>
                         <Content />
                     </div>
                     <DefaultFooterDashboard
               />
                 </main>
-            </div>      
+            </div>
         </>
     );
 }

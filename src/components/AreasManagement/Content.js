@@ -12,7 +12,26 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import PropTypes from 'prop-types';
+import Button from '@mui/material/Button';
+import { styled } from '@mui/material/styles';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import CloseIcon from '@mui/icons-material/Close';
+import TextField from '@mui/material/TextField';
+import { display } from '@mui/system';
 
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+        padding: theme.spacing(2),
+    },
+    '& .MuiDialogActions-root': {
+        padding: theme.spacing(1),
+    },
+}));
 
 const columns = [
     {
@@ -37,18 +56,71 @@ const columns = [
     },
 ];
 
+const BootstrapDialogTitle = (props) => {
+    const { children, onClose, ...other } = props;
+
+    return (
+        <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+            {children}
+            {onClose ? (
+                <IconButton
+                    aria-label="close"
+                    onClick={onClose}
+                    sx={{
+                        position: 'absolute',
+                        right: 8,
+                        top: 8,
+                        color: (theme) => theme.palette.grey[500],
+                    }}
+                >
+                    <CloseIcon />
+                </IconButton>
+            ) : null}
+        </DialogTitle>
+    );
+};
+
+BootstrapDialogTitle.propTypes = {
+    children: PropTypes.node,
+    onClose: PropTypes.func.isRequired,
+};
 
 export default function Content() {
-    function createData(Title, Adress) {
-        let Edit = (<button className="text-white  outline-none bg-blue-600 rounded-lg   h-8 w-8">
+    const [open, setOpen] = React.useState(false);
+    const [selectedValue, setSelectedValue] = React.useState([]);
+
+    const handleClickOpen = (data) => {
+        console.log("111111", data);
+        setOpen(true);
+        setSelectedValue(data);
+    };
+    const handleClose = () => {
+        setOpen(false);
+
+    };
+    function createData(data) {
+        let Title = data.name;
+        let Adress = data.location;
+        let Edit = (<button className="text-white  outline-none bg-blue-600 rounded-lg   h-8 w-8" onClick={() => handleClickOpen(data)}>
             <EditIcon />
         </button>);
-        let Delete = (<button className="text-white  outline-none bg-blue-600 rounded-lg   h-8 w-8">
+        let Delete = (<button className="text-white  outline-none bg-red-600 rounded-lg   h-8 w-8">
             <DeleteIcon />
         </button>);
 
-        return {  Title, Adress, Edit, Delete };
+        return { Title, Adress, Edit, Delete };
     }
+    let Id;
+    if (selectedValue.id != undefined) {
+        Id = (<div className='max-w-5xl my-5 mx-auto'>
+            <TextField className='w-96 my-5' defaultValue={selectedValue.id} disabled id="outlined-basic" label="Id" variant="outlined" />
+        </div>)
+    } else {
+        Id = (<div className='max-w-5xl my-5 mx-auto'>
+            <TextField className='w-96 my-5' defaultValue={selectedValue.id}   id="outlined-basic" label="Id" variant="outlined" />
+        </div>)
+    }
+
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -72,7 +144,7 @@ export default function Content() {
     ]
 
     const rows1 = data.map((data, index) => {
-        return (createData(data.name, data.location))
+        return (createData(data))
     })
 
     const rows = [
@@ -80,15 +152,39 @@ export default function Content() {
 
     return (
         <section className=" ml-0 xl:ml-64  px-5 pt-10  ">
-            <Paper className='mt-24 ' sx={{ width: '100%', overflow: 'hidden' }}>
+            <Paper className=' ' sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableHead >
                     <div className='pt-2 pl-4 block font-semibold text-xl'>
-                    Areas Management
+                        Areas Management
                     </div>
                 </TableHead>
-                <button className='bg-blue-600 text-white rounded-md ml-5 my-6 py-2 px-4'>
+                <button className='bg-blue-600 text-white rounded-md ml-5 my-6 py-2 px-4' onClick={handleClickOpen}>
                     Add Areas
                 </button>
+                <BootstrapDialog
+                    onClose={handleClose}
+                    aria-labelledby="customized-dialog-title"
+                    open={open}
+                >
+                    <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
+                        Add Delivery Boy
+                    </BootstrapDialogTitle>
+                    <DialogContent dividers >
+                        {Id}
+                       
+                        <div className='max-w-5xl my-5 mx-auto'>
+                            <TextField className='w-96 my-5' defaultValue={selectedValue.name} id="outlined-basic" label="Title" variant="outlined" />
+                        </div>
+                        <div className='max-w-5xl my-5 mx-auto'>
+                            <TextField className='w-96 my-5' defaultValue={selectedValue.location} autoComplete='off' id="outlined-basic" label="Address" variant="outlined" />
+                        </div>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>
+                            Save
+                        </Button>
+                    </DialogActions>
+                </BootstrapDialog>
                 <div className='pr-5 my-6 float-right'>
                     <Paper
                         component="form"
@@ -129,9 +225,7 @@ export default function Content() {
                                         <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                                             {columns.map((column) => {
                                                 const value = row[column.id];
-
-
-                                                return (
+                                   return (
                                                     <TableCell key={column.id} >
                                                         {value}
                                                     </TableCell>
@@ -156,3 +250,5 @@ export default function Content() {
         </section>
     );
 }
+
+

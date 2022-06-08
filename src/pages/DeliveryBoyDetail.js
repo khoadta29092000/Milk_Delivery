@@ -1,5 +1,5 @@
-import Header from 'components/DefaultHeaderDashboard';
-import Content from 'components/AreasManagement/Content';
+import DefaultHeaderDashboard from 'components/DefaultHeaderDashboard';
+import Content from 'components/DeliveryBoyDetail/Content';
 import DefaultNavbarAdmin from 'components/DefaultNavbarAdmin';
 import { React, useState, } from 'react';
 import Modal from '@mui/material/Modal';
@@ -7,12 +7,14 @@ import DefaultFooterDashboard from 'components/DefaultFooterDashboard';
 import Typography from '@mui/material/Typography';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import { Link } from 'react-router-dom';
+import Header from 'components/DeliveryBoyDetail/Header';
+
 function handleClick(event) {
     event.preventDefault();
     console.info('You clicked a breadcrumb.');
   }
 
-export default function AreasManagement() {
+export default function DeliveryBoyDetail() {
     const [openNav, setOpenNav] = useState(false);
     const handleClose = () => setOpenNav(false);
 
@@ -37,30 +39,36 @@ export default function AreasManagement() {
 
     return (
         <>
-              <div className=' grid grid-cols-12'>
+            <div className=' grid grid-cols-12'>
                 <div className=" invisible xl:visible absolute w-64 z-20  bg-lightblue2">
                     <DefaultNavbarAdmin className="" />
                     {modal}
                 </div>
                 <main className="ml-0 mb-0 bg-gray-100  w-screen overflow-y-auto h-screen ">
                     <div className='absolute   z-10'>
-                        <Header parentCallback={callbackFunction} className="" />
+                        <DefaultHeaderDashboard parentCallback={callbackFunction} className="" />
                     </div>
                     <div className='  ml-0 xl:ml-64  mt-28 text-white ' role="presentation" onClick={handleClick}>
                         <Breadcrumbs className='pl-5' aria-label="breadcrumb">
-                            <Link underline="hover" className='hover:underline' to="/" color="inherit" >
+                            <Link underline="hover" to="/" className='hover:underline' color="inherit" >
                                 Home
                             </Link>
-                            <Typography color="text.primary">Areas</Typography>
+                            <Link underline="hover" to="/DeliveryBoyManagement" className='hover:underline' color="inherit" >
+                            Delivery Boy
+                            </Link>
+                            <Typography color="text.primary">Detail</Typography>
                         </Breadcrumbs>
                     </div>
+                    <div className=''>
+                       <Header />
+                    </div>
                     <div className='mb-12'>
-                        <Content />
+                       <Content />
                     </div>
                     <DefaultFooterDashboard
-              />
+                    />
                 </main>
-            </div>      
+            </div>
         </>
     );
 }
