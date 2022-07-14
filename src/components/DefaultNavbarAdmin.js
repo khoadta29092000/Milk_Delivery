@@ -15,7 +15,9 @@ export default function DefaultNavbarAdmin() {
       <aside className='fixed h-screen w-64 rounded-none' aria-label="Sidebar">
          <div className="overflow-y-auto rounded-none  px-3 bg-lightblue2 text-white  h-screen  dark:bg-gray-800">
             <div className='text-white ml-16 h-16 tracking-widest pt-3  text font-bold text-3xl'>
-               FBT
+            <NavLink to="/">
+            FBT
+            </NavLink>
             </div>
             <div className='ml-2 uppercase mt-4 text-xs mb-5'>Main</div>
             <ul className="space-y-8">

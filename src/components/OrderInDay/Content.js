@@ -121,7 +121,7 @@ export default function Content() {
             <Paper className='mt-24 ' sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableHead >
                     <div className='pt-2 pl-4 block font-semibold text-xl'>
-                        Order In {date}
+                        Order In {date} / ({rows1.length})
                     </div>
                 </TableHead>
                 <div className='float-left ml-5 gap-5 my-6  grid grid-cols-6'>
