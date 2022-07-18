@@ -23,6 +23,16 @@ import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import queryString from 'query-string';
 import { useEffect, useState } from "react";
+import Search from 'components/Search';
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage"
+import { storage } from 'firebase';
+import { v4 } from "uuid";
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
         padding: theme.spacing(2),
@@ -41,8 +51,8 @@ const columns = [
         minWidth: 150,
     },
     {
-        id: 'Category',
-        label: 'Category',
+        id: 'Price',
+        label: 'Price',
         minWidth: 100,
     },
     {
@@ -89,21 +99,47 @@ BootstrapDialogTitle.propTypes = {
 export default function Content() {
     const [open, setOpen] = React.useState(false);
     const [selectedValue, setSelectedValue] = React.useState([]);
-   
+    const [id, setId] = useState("");
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [img, setImg] = useState("");
+    const [price, setPrice] = useState("");
+    const [data, setData] = useState([]);
+    const [search, setSearch] = useState("");
+    const [status, setStatus] = useState("success");
+    const [alert, setAlert] = useState(false);
     const handleClickOpen = (data) => {
         console.log("111111", data);
         setOpen(true);
         setSelectedValue(data);
         setSelectedImage(data.img);
+        setImg(data.img)
+        setId(data.id)
+        setTitle(data.title)
+        setDescription(data.description)
+        setPrice(data.price)
     };
     const handleClose = () => {
         setOpen(false);
         setSelectedImage(undefined);
         SetClick(false);
+   
+    };
+    const validName = new RegExp(/^\S{6,30}$/);
+    const validDes = new RegExp(/^\S{6,300}$/);
+    const validNum = new RegExp("^[0-9]*$");
+
+    const body = {
+        id: id,
+        title: title,
+        description: description,
+        img: img,
+        price: price
     };
     function createData(data) {
-        let Title = data.Title;
-        let Category = data.Category < 10 ? data.Category : data.Category.slice(0, 10).concat("...");
+        let Title = data.title;
+        let Price = data.price.toFixed(3).replace(/\d(?=(\d{3})+\.)/g, "$&.") ;
+
         let Image = (
             <img
                 src={data.img}
@@ -113,21 +149,21 @@ export default function Content() {
         let Edit = (<button className="text-white  outline-none bg-blue-600 rounded-lg   h-8 w-8" onClick={() => handleClickOpen(data)}>
             <EditIcon />
         </button>);
-        let Delete = (<button className="text-white  outline-none bg-red-600 rounded-lg   h-8 w-8">
+        let Delete = (<button className="text-white  outline-none bg-red-600 rounded-lg   h-8 w-8"onClick={() => handleDelete(data)}> 
             <DeleteIcon />
         </button>);
- 
-        return { Image, Title, Category, Edit, Delete };
+
+        return { Image, Title, Price, Edit, Delete };
     }
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [selectedImage, setSelectedImage] = React.useState();
     const [click, SetClick] = React.useState(false)
-    const [search, setSearch] = useState("");
 
-   
+
+
     useEffect(() => {
-      
+        featchPakageList();
         setPage(0);
     }, [search]);
     const handleChangePage = (event, newPage) => {
@@ -138,36 +174,209 @@ export default function Content() {
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
-
-    console.log("----------", page, rowsPerPage)
-
-    
-
-    const data = [
-        { img: "https://cdn.nguyenkimmall.com/images/companies/_1/tin-tuc/kinh-nghiem-meo-hay/n%E1%BA%A5u%20%C4%83n/uong-sua-hat-giam-can-tot-cho-suc-khoe.jpg", Title: "1 Sữa Tươi, 1 Kem", Category: "Fresh Milk, Kem" },
-        { img: "https://cdn.nguyenkimmall.com/images/companies/_1/tin-tuc/kinh-nghiem-meo-hay/n%E1%BA%A5u%20%C4%83n/uong-sua-hat-giam-can-tot-cho-suc-khoe.jpg", Title: "3 Sữa các loại", Category: "Milk, Milk, Milk, Kem" },
-        { img: "https://cdn.nguyenkimmall.com/images/companies/_1/tin-tuc/kinh-nghiem-meo-hay/n%E1%BA%A5u%20%C4%83n/uong-sua-hat-giam-can-tot-cho-suc-khoe.jpg", Title: "2 Sữa đậu, 1 Sữa hạt", Category: "Sữa đậu, Sữa đậu, Sữa hạt " },
-    ]
-
     const rows1 = data.map((data, index) => {
         return (createData(data))
     })
 
-    const rows = [
-    ];
+
     let Id;
     if (selectedValue.id != undefined) {
         Id = (<div className='max-w-5xl my-5 mx-auto'>
-            <TextField className='w-96 my-5' defaultValue={selectedValue.id} disabled id="outlined-basic" label="Id" variant="outlined" />
+            <TextField className='w-96 my-5'  defaultValue={id} disabled id="outlined-basic" label="Id" variant="outlined" />
         </div>)
     } else {
         Id = (<div className='max-w-5xl my-5 mx-auto'>
-            <TextField className='w-96 my-5' defaultValue={selectedValue.id} id="outlined-basic" label="Id" variant="outlined" />
+            <TextField className='w-96 my-5' onChange={e => setId(e.target.value)} defaultValue={selectedValue.id} id="outlined-basic" label="Id" variant="outlined" />
         </div>)
     }
 
+    async function featchPakageList() {
+        try {
+
+
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Packages/Getallpackages?search=${search}`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setData(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+
+    console.log("aa fetch", data)
+
+
+    const [progresspercent, setProgresspercent] = useState(0);
+
+    async function handleUpload() {
+        if (click == false) { setImg(selectedImage) }
+        else {
+            const storageRef = ref(storage, `Package/${selectedImage.name + v4()}`);
+            const uploadTask = uploadBytesResumable(storageRef, selectedImage);
+            uploadTask.on("state_changed",
+                (snapshot) => {
+                    const progress =
+                        Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                    setProgresspercent(progress);
+                },
+                (error) => {
+                    alert(error);
+                },
+                () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        setImg(downloadURL)
+                    });
+                }
+            );
+        }
+    }
+    const [NumError, setNum] = useState(false)
+    const [phoneErrorr, setDesErr] = useState(false)
+    const [nameError, setNameError] = useState(false)
+    const [message, setMess] = useState(false)
+    async function handleUpdateOrCreate() {
+        if (!validName.test(title) || !validName.test(img)) {
+            setNameError(true)
+            setDesErr(false)
+            setNum(false)
+        } else if (!validDes.test(description)) {
+            setNameError(false)
+            setDesErr(true)
+            setNum(false)
+        } else if (!validNum.test(id) || !validNum.test(price)) {
+            setNameError(false)
+            setDesErr(false)
+            setNum(true)
+        }
+        else {
+            setNum(false)
+            setNameError(false)
+            setDesErr(false)
+            if (selectedValue.id != undefined) {
+                const res = await fetch(`http://www.subcriptionmilk.somee.com/api/Packages/update`, {
+                    method: `PUT`,
+                    headers: {
+                        'Content-Type': 'application/json',
+
+                    },
+                    body: JSON.stringify(body)
+                }).then(res => res.json())
+                    .then(result => {
+
+                        if (result) {
+                            if (result?.statusCode == 201) {
+                                setMess("Update Successfullly")
+                                setAlert(true)
+                                setStatus("success")
+                                handleClose();
+                                featchPakageList();
+                            }
+
+                        } else {
+                            alert("Update UnSuccessfullly")
+                        }
+                        return res
+
+                    })
+                    .catch((error) => {
+                        throw ('Invalid Token')
+                    })
+                return body
+
+            } else {
+                const res = await fetch(`http://www.subcriptionmilk.somee.com/api/Packages/create`, {
+                    method: `POST`,
+                    headers: {
+                        'Content-Type': 'application/json',
+
+                    },
+                    body: JSON.stringify(body)
+                }).then(res => res.json())
+                    .then(result => {
+
+                        if (result) {
+                            if (result?.statusCode == 201) {
+                                setMess("Add Successfullly")
+                                setAlert(true)
+                                setStatus("success")
+                                handleClose();
+                                featchPakageList();
+                            }
+
+                        } else {
+                            alert("Add UnSuccessfullly")
+                        }
+                        return res
+
+                    })
+                    .catch((error) => {
+                        throw ('Invalid Token')
+                    })
+                return body
+            }
+        }
+    }
+    async function handleDelete(data) {
+
+        let res = await fetch(`http://www.subcriptionmilk.somee.com/api/Packages/${data?.id}`, {
+            method: `DELETE`,
+            headers: {
+                'Content-Type': 'application/json',
+
+            },
+        }).then(function (response) {
+            if (response.ok) {
+                return response.blob();
+            }
+            throw new Error('Not Delete Bacause Product In Order');
+        }).then(result => {
+           
+                setMess("Delete Successfully")
+                setAlert(true)
+                setStatus("success")
+                featchPakageList();
+          
+
+        }).catch(function (error) {
+            console.log('There has been a problem with your fetch operation: ',
+            );
+            setStatus("warning")
+            setMess(error.message)
+            setAlert(true)
+        });
+    }
+    const handleCloseAlert = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+
+        setAlert(false);
+    };
+    const callbackSearch = (childData) => {
+        setSearch(childData)
+
+    };
+
     return (
         <section className=" ml-0 xl:ml-64  px-5 pt-10  ">
+            <Snackbar open={alert} autoHideDuration={4000} onClose={handleCloseAlert} className="float-left w-screen">
+                <Alert onClose={handleCloseAlert} severity={status} >
+                    {message}
+                </Alert>
+            </Snackbar>
             <Paper className='mt-24 ' sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableHead >
                     <div className='pt-2 pl-4 block font-semibold text-xl'>
@@ -182,10 +391,13 @@ export default function Content() {
                     aria-labelledby="customized-dialog-title"
                     open={open}
                 >
-                    <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
+                    <BootstrapDialogTitle id="" onClose={handleClose}>
                         Add Delivery Boy
                     </BootstrapDialogTitle>
                     <DialogContent dividers >
+                        {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 6 - 30 character </div>}
+                        {NumError && <div className='text-red-600 ml-11 mb-5 text-xl'>Id or Price Not Number</div>}
+                        {phoneErrorr && <div className='text-red-600 ml-11 mb-5 text-xl'>Description 6 - 300 character</div>}
                         {Id}
                         <div className='max-w-5xl my-5 mx-auto'>
                             <Button
@@ -206,36 +418,31 @@ export default function Content() {
                         <div className='max-w-5xl my-5 mx-auto'>
                             {selectedImage == undefined ? <div></div> : <img alt="" className='mx-auto h-24 w-24 my-5' src={click == false ? selectedValue.img : window.URL.createObjectURL(selectedImage)} />}
                         </div>
+                        <Button variant="contained"
+                            component="label"
+
+                            onClick={handleUpload} className='bg-blue-600 text-white rounded-md ml-5 my-6 py-2 px-4' >
+                            Save Img
+                        </Button>
                         <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' defaultValue={selectedValue.Title} autoComplete='off' id="outlined-basic" label="Title" variant="outlined" />
+                            <TextField className='w-96 my-5' onChange={e => setTitle(e.target.value)} defaultValue={selectedValue.title} autoComplete='off' id="outlined-basic" label="Title" variant="outlined" />
                         </div>
                         <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' autoComplete='off' defaultValue={selectedValue.Category} id="outlined-basic" label="Category" variant="outlined" />
+                            <TextField className='w-96 my-5' onChange={e => setPrice(e.target.value)} autoComplete='off' defaultValue={selectedValue.price} id="outlined-basic" label="Prcie" variant="outlined" />
                         </div>
-                      
+                        <div className='max-w-5xl my-5 mx-auto'>
+                            <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Description</label>
+                            <textarea id="message" onChange={e => setDescription(e.target.value)} defaultValue={selectedValue.description} rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your message..."></textarea>
+                        </div>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleClose}>
+                        <Button onClick={handleUpdateOrCreate}>
                             Save
                         </Button>
                     </DialogActions>
                 </BootstrapDialog>
                 <div className='pr-5 my-6 float-right'>
-                    <Paper
-                        component="form"
-
-                        sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 300 }}
-                    >
-                        <InputBase
-                            sx={{ ml: 1, flex: 1 }}
-                            placeholder="Search Package"
-                            inputProps={{ 'aria-label': 'Search Product' }}
-                        />
-                        <IconButton className='' sx={{ p: '10px', outline: "none" }} >
-                            <SearchIcon />
-                        </IconButton>
-
-                    </Paper>
+                    <Search parentCallback={callbackSearch} />
                 </div>
                 <TableContainer sx={{}}>
                     <Table stickyHeader aria-label="sticky table">
@@ -245,7 +452,7 @@ export default function Content() {
                                     <TableCell
                                         key={column.id}
                                         align={column.align}
-                                        style={{ minWidth: column.minWidth }}   
+                                        style={{ minWidth: column.minWidth }}
                                     >
                                         {column.label}
                                     </TableCell>

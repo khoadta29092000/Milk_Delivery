@@ -127,7 +127,7 @@ export default function Content() {
         setSelectedImage(data.img);
         setSelectedValue(data);
     };
-    const validName = new RegExp("(?=.{6,30}$)");
+    const validName = new RegExp(/^\S{6,30}$/);
     const validPhone = new RegExp(/(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/);
     const body =  {   
         id: id,         
@@ -452,10 +452,10 @@ console.log("selected img", selectedValue.id)
                   Save Img
                 </Button>                                                                           
                         <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' onChange={e => setUserName(e.target.value)}  defaultValue={selectedValue.username} id="outlined-basic" label="Full Name" variant="outlined" />
+                            <TextField className='w-96 my-5' onChange={e => setFullName(e.target.value)}  defaultValue={selectedValue.username} id="outlined-basic" label="Full Name" variant="outlined" />
                         </div>
                         <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' onChange={e => setFullName(e.target.value)} defaultValue={selectedValue.fullName} autoComplete='off' id="outlined-basic" label="Username" variant="outlined" />
+                            <TextField className='w-96 my-5' onChange={e => setUserName(e.target.value)} defaultValue={selectedValue.fullName} autoComplete='off' id="outlined-basic" label="Username" variant="outlined" />
                         </div>
                         <div className='max-w-5xl my-5 mx-auto'>
                             <TextField className='w-96 my-5' onChange={e => setPassword(e.target.value)} autoComplete='off' defaultValue={selectedValue.password} id="outlined-basic" label="Password" variant="outlined" type="password" />

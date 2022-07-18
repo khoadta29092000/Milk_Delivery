@@ -110,8 +110,8 @@ export default function Content() {
     const [data, setData] = useState([]);
     const [search, setSearch] = useState("");
     const [alert, setAlert] = useState(false);
-    const validName = new RegExp("(?=.{6,30}$)");
-    const validDes = new RegExp("(?=.{6,500}$)");
+    const validName = new RegExp(/^\S{6,30}$/);
+    const validDes = new RegExp(/^\S{6,300}$/);
     const body =  {   
         id: id,         
         title: title,
@@ -121,7 +121,7 @@ export default function Content() {
         
     };
     const bodyCreate =  {   
-          
+          id: id,
            
         title: title,
         address: address,
@@ -158,11 +158,11 @@ export default function Content() {
     let Id;
     if (selectedValue.id != undefined) {
         Id = (<div className='max-w-5xl my-5 mx-auto'>
-            <TextField className='w-96 my-5' defaultValue={selectedValue.id} disabled id="outlined-basic" label="Id" variant="outlined" />
+            <TextField className='w-96 my-5'onChange={e => setId(e.target.value)} defaultValue={selectedValue.id} disabled id="outlined-basic" label="Id" variant="outlined" />
         </div>)
     } else {
         Id = (<div className='max-w-5xl my-5 mx-auto'>
-        <TextField className='w-96 my-5' defaultValue={selectedValue.id}  id="outlined-basic" label="Id" variant="outlined" />
+        <TextField className='w-96 my-5'onChange={e => setId(e.target.value)} defaultValue={selectedValue.id}  id="outlined-basic" label="Id" variant="outlined" />
     </div>)
     }
 

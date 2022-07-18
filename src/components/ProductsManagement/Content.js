@@ -127,9 +127,7 @@ export default function Content() {
         setSelectedValue(data);
         setSelectedImage(data.img);
         setCategoryId(data.categoryId)
-        setOpen(true);
-        setSelectedValue(data);
-        setSelectedImage(data.img);
+
         setImg(data.img)
         setId(data.id)
         setTitle(data.title)
@@ -141,8 +139,8 @@ export default function Content() {
         setSelectedImage(undefined);
         SetClick(false);
     };
-    const validName = new RegExp("(?=.{6,30}$)");
-    const validDes = new RegExp("(?=.{6,500}$)");
+    const validName = new RegExp(/^\S{6,30}$/);
+    const validDes = new RegExp(/^\S{6,300}$/);
     const body = {
         id: id,
         title: title,
@@ -215,7 +213,7 @@ export default function Content() {
     let Id;
     if (selectedValue.id != undefined) {
         Id = (<div className='max-w-5xl my-5 mx-auto'>
-            <TextField className='w-96 my-5' defaultValue={selectedValue.id} disabled id="outlined-basic" label="Id" variant="outlined" />
+            <TextField className='w-96 my-5'  defaultValue={id} disabled id="outlined-basic" label="Id" variant="outlined" />
         </div>)
     } else {
         Id = (<div className='max-w-5xl my-5 mx-auto'>
@@ -392,16 +390,11 @@ export default function Content() {
           }
           throw new Error('Not Delete Bacause Product In Order');
          }).then(result => { 
-            if (result?.statusCode === 200) {
+           
                 setMess(result.content)
                 setAlert(true)
                 setStatus("success")
                 featchCategoryList();
-            } else {
-                alert("delete thất bại")
-                // setError(result.message)
-                // alert("tài khoản hoặc mật khẩu sai kìa")
-            }
             
          }).catch(function(error) {
           console.log('There has been a problem with your fetch operation: ', 
@@ -478,18 +471,18 @@ export default function Content() {
                             Save Img
                         </Button>
                         <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' onChange={e => setTitle(e.target.value)} defaultValue={selectedValue.Title} autoComplete='off' id="outlined-basic" label="Title" variant="outlined" />
+                            <TextField className='w-96 my-5' onChange={e => setTitle(e.target.value)} defaultValue={selectedValue.title} autoComplete='off' id="outlined-basic" label="Title" variant="outlined" />
                         </div>
 
                         <div className='max-w-5xl my-5 mx-auto'>
-                            <Box sx={{ minWidth: 120 }}>
+                        <Box sx={{ minWidth: 120 }}>
                                 <FormControl fullWidth>
                                     <InputLabel id="demo-simple-select-label">Category</InputLabel>
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
                                         defaultValue={categoryId}
-                                        label="Category"
+                                        label="Supplier"
                                         onChange={e => setCategoryId(e.target.value)}
                                     >
 
@@ -538,21 +531,7 @@ export default function Content() {
                     </DialogActions>
                 </BootstrapDialog>
                 <div className='pr-5 my-6 float-right'>
-                    <Paper
-                        component="form"
-
-                        sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 300 }}
-                    >
-                        <InputBase
-                            sx={{ ml: 1, flex: 1 }}
-                            placeholder="Search Product"
-                            inputProps={{ 'aria-label': 'Search Product' }}
-                        />
-                        <IconButton className='' sx={{ p: '10px', outline: "none" }} >
-                            <SearchIcon />
-                        </IconButton>
-
-                    </Paper>
+                <Search parentCallback={callbackSearch} />
 
                 </div>
                 <TableContainer sx={{}}>

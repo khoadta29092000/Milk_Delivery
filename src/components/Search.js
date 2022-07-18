@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-
+import InputBase from '@mui/material/InputBase';
+import IconButton from '@mui/material/IconButton';
+import SearchIcon from '@mui/icons-material/Search';
+import Paper from '@mui/material/Paper';
 Search.propTypes = {
     onSubmit: PropTypes.func,
 };
@@ -46,20 +47,22 @@ function Search(props) {
                     placeholder="Search..."
                     className="border-2 rounded-lg float-right mr-16 mb-10 border-xanhla w-64  my-auto outline-none p-5 h-10   mt-5"
                 /> */}
-                 <Box
-                    component="form"
-                    sx={{
-                        '& > :not(style)': { m: 1, width: '25ch' },
-                    }}
-                    noValidate
-                    autoComplete="off"
-                >
-                    <TextField 
-                    value={searchTerm}
-                    onChange={handleSearchTermChange}
-                    id="outlined-basic" label="Search..." variant="outlined" />
-                </Box>
+ <Paper
+                        component="form"
 
+                        sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 300 }}
+                    >
+                        <InputBase
+                            sx={{ ml: 1, flex: 1 }}
+                            placeholder="Search Product"
+                            alue={searchTerm}
+                            onChange={handleSearchTermChange}
+                        />
+                        <IconButton className='' sx={{ p: '10px', outline: "none" }} >
+                            <SearchIcon />
+                        </IconButton>
+
+                    </Paper>
 
 
             </form>
