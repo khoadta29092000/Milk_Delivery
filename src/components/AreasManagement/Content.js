@@ -22,6 +22,20 @@ import DialogActions from '@mui/material/DialogActions';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import { display } from '@mui/system';
+import { useEffect, useState } from "react";
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import Search from 'components/Search';
+
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -88,23 +102,54 @@ BootstrapDialogTitle.propTypes = {
 export default function Content() {
     const [open, setOpen] = React.useState(false);
     const [selectedValue, setSelectedValue] = React.useState([]);
-
+    const [id, setId] = useState("");
+    const [title, setTitle] = useState("");
+    const [address, setAddress] = useState("");
+    const [description, setDescription] = useState("");
+    const [slotId, setSlotId] = useState("");
+    const [data, setData] = useState([]);
+    const [search, setSearch] = useState("");
+    const [alert, setAlert] = useState(false);
+    const validName = new RegExp("(?=.{6,30}$)");
+    const validDes = new RegExp("(?=.{6,500}$)");
+    const body =  {   
+        id: id,         
+        title: title,
+        address: address,
+        description: description,       
+        slotId: slotId
+        
+    };
+    const bodyCreate =  {   
+          
+           
+        title: title,
+        address: address,
+        description: description,       
+        slotId: slotId
+    };
     const handleClickOpen = (data) => {
         console.log("111111", data);
         setOpen(true);
-        setSelectedValue(data);
+        setId(data.id);
+        setTitle(data.title);
+        setAddress(data.address);
+        setDescription(data.description);
+        setSlotId(data.slotId);
+        setSelectedValue(data)
     };
     const handleClose = () => {
         setOpen(false);
 
     };
     function createData(data) {
-        let Title = data.name;
-        let Adress = data.location;
+        let Title = data.title;
+        let Adress = data.address;
+        let Description = data.description;
         let Edit = (<button className="text-white  outline-none bg-blue-600 rounded-lg   h-8 w-8" onClick={() => handleClickOpen(data)}>
             <EditIcon />
         </button>);
-        let Delete = (<button className="text-white  outline-none bg-red-600 rounded-lg   h-8 w-8">
+        let Delete = (<button className="text-white  outline-none bg-red-600 rounded-lg   h-8 w-8" onClick={() => handleDelete(data)}>
             <DeleteIcon />
         </button>);
 
@@ -117,8 +162,8 @@ export default function Content() {
         </div>)
     } else {
         Id = (<div className='max-w-5xl my-5 mx-auto'>
-            <TextField className='w-96 my-5' defaultValue={selectedValue.id}   id="outlined-basic" label="Id" variant="outlined" />
-        </div>)
+        <TextField className='w-96 my-5' defaultValue={selectedValue.id}  id="outlined-basic" label="Id" variant="outlined" />
+    </div>)
     }
 
     const [page, setPage] = React.useState(0);
@@ -135,23 +180,169 @@ export default function Content() {
 
     console.log("----------", page, rowsPerPage)
 
-    const data = [
-        { id: 1, name: "Chung cư lô A", location: "139-141 Nguyễn Gia Trí, P.25, Q.Bình Thạnh, TP. Hồ Chí Minh" },
-        { id: 2, name: "LandMark Park", location: "161 Xa Lộ Hà Nội, P. Thảo Điền, Q.2, TP. Hồ Chí Minh" },
-        { id: 3, name: "Ocen City", location: "1311 Ông Cao Thắng, P.Tân Kì, Q.10, TP. Hồ Chí Minh" },
-        { id: 4, name: "Ceberus", location: "15 Gò Xoài, P.An Đới, Q.Tân Phú, TP. Hồ Chí Minh" },
-        { id: 5, name: "SBTC Entertainment", location: "415 Lê Văn Việt, P.Tân Thành, Q.9, TP. Thủ Đức" },
+    const slot = [
+        { id: 1, name: "  Morning : 6:30 AM - 7:00 AM", location: "139-141 Nguyễn Gia Trí, P.25, Q.Bình Thạnh, TP. Hồ Chí Minh" },
+        { id: 2, name: "Noon : 12:00 AM - 12:30 AM ", location: "161 Xa Lộ Hà Nội, P. Thảo Điền, Q.2, TP. Hồ Chí Minh" },
+        { id: 3, name: "Afternoon : 5:30 AM - 6:00 AM ", location: "1311 Ông Cao Thắng, P.Tân Kì, Q.10, TP. Hồ Chí Minh" },
+       
     ]
+    useEffect(() => {
+        featchStationist();
+        setPage(0);
+    }, [search] );
+
+    async function featchStationist() {
+        try {
+    
+         
+          const requestURL = `http://www.subcriptionmilk.somee.com/api/Stations/Getallstations?search=${search}`;
+    
+          const response = await fetch(requestURL, {
+            method: `GET`,
+            headers: {
+              'Content-Type': 'application/json',
+             
+            },
+          });
+          const responseJSON = await response.json();
+    
+          const  data  = responseJSON;
+    
+          setData(responseJSON.data)
+        
+       console.log("aa fetch", responseJSON.data)
+    
+        } catch (error) {
+          console.log('Fail to fetch product list: ', error)
+        }
+      }
 
     const rows1 = data.map((data, index) => {
         return (createData(data))
     })
 
-    const rows = [
-    ];
-
+    const [desErrorr, setDesErrorr] = useState(false)
+    const [nameError, setNameError] = useState(false)
+    const [message, setMess] = useState(false)
+        async function handleUpdateOrCreate()  {     
+            if (!validName.test(title) || !validName.test(address)  ) {
+                setNameError(true)
+                setDesErrorr(false)
+            }else if (!validDes.test(description)) {
+                setNameError(false)
+                setDesErrorr(true)
+            } else {
+                
+                setNameError(false)
+                setDesErrorr(false)
+                if(selectedValue.id != undefined){
+                    const res = await fetch(`http://www.subcriptionmilk.somee.com/api/Stations/update`, {
+                        method: `PUT`,
+                        headers: {
+                            'Content-Type': 'application/json',
+                           
+                        },
+                        body: JSON.stringify(body)
+                    }).then(res => res.json())
+                        .then(result => {
+            
+                            if (result) {
+                                if (result?.statusCode == 201) {
+                                    setMess("Update Successfullly")
+                                    setAlert(true)
+                                    handleClose();
+                                    featchStationist();
+                                }
+            
+                            } else {
+                                alert("Update UnSuccessfullly")
+                            }
+                            return res
+            
+                        })
+                        .catch((error) => {
+                            throw ('Invalid Token')
+                        })
+                    return body
+                  
+                }else{
+                    const res = await fetch(`http://www.subcriptionmilk.somee.com/api/Stations/create`, {
+                        method: `POST`,
+                        headers: {
+                            'Content-Type': 'application/json',
+                           
+                        },
+                        body: JSON.stringify(bodyCreate)
+                    }).then(res => res.json())
+                        .then(result => {
+            
+                            if (result) {
+                                if (result?.statusCode == 201) {
+                                     setMess("Add Successfullly")
+                                     setAlert(true)
+                                    handleClose();
+                                    featchStationist();
+                                }
+            
+                            } else {
+                                alert("Add UnSuccessfullly")
+                            }
+                            return res
+            
+                        })
+                        .catch((error) => {
+                            throw ('Invalid Token')
+                        })
+                    return body         
+                    }
+                }           
+            }
+            async function handleDelete(data) {
+    
+                let res = await fetch(`http://www.subcriptionmilk.somee.com/api/Stations/${data?.id}`, {
+                    method: `DELETE`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                      
+                    },
+                }).then(res => res.json())
+                    .then(result => {
+        
+                        if (result?.statusCode === 200) {
+                            setMess(result.content)
+                            setAlert(true)
+                            featchStationist();
+                        } else {
+                            alert("delete thất bại")
+                            // setError(result.message)
+                            // alert("tài khoản hoặc mật khẩu sai kìa")
+                        }
+                        return res
+        
+                    })
+                    .catch((error) => {
+                        throw ('Invalid Token')
+                    })
+                return res
+            }
+            const handleCloseAlert = (event, reason) => {
+                if (reason === "clickaway") {
+                  return;
+                }
+            
+                setAlert(false);
+              };
+              const callbackSearch = (childData) => {
+                setSearch(childData)
+        
+            };
     return (
         <section className=" ml-0 xl:ml-64  px-5 pt-10  ">
+             <Snackbar open={alert} autoHideDuration={4000} onClose={handleCloseAlert} className="float-left w-screen">
+                    <Alert onClose={handleCloseAlert} severity="success" >
+                        {message}
+                    </Alert>
+                </Snackbar>
             <Paper className=' ' sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableHead >
                     <div className='pt-2 pl-4 block font-semibold text-xl'>
@@ -166,40 +357,58 @@ export default function Content() {
                     aria-labelledby="customized-dialog-title"
                     open={open}
                 >
-                    <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
+                    <BootstrapDialogTitle id="" onClose={handleClose}>
                         Add Delivery Boy
                     </BootstrapDialogTitle>
                     <DialogContent dividers >
+                    {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 6 - 30 character </div>}
+                    
+                    {desErrorr && <div className='text-red-600 ml-11 mb-5 text-xl'>Description 6 - 300 character</div>}
                         {Id}
                        
                         <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' defaultValue={selectedValue.name} id="outlined-basic" label="Title" variant="outlined" />
+                            <TextField className='w-96 my-5' onChange={e => setTitle(e.target.value)}  defaultValue={selectedValue.title} id="outlined-basic" label="Title" variant="outlined" />
                         </div>
                         <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' defaultValue={selectedValue.location} autoComplete='off' id="outlined-basic" label="Address" variant="outlined" />
+                            <TextField className='w-96 my-5' onChange={e => setAddress(e.target.value)}  defaultValue={selectedValue.address} autoComplete='off' id="outlined-basic" label="Address" variant="outlined" />
+                        </div>
+                        <div className='max-w-5xl my-5 mx-auto'>
+                            <TextField className='w-96 my-5' onChange={e => setDescription(e.target.value)} defaultValue={selectedValue.description} autoComplete='off' id="outlined-basic" label="Description" variant="outlined" />
+                        </div>
+                        <div className='max-w-5xl my-5 mx-auto'>
+                        <Box sx={{ minWidth: 120 }}>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Slot</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    defaultValue={slotId}
+                                    label="Slot"
+                                    onChange={e => setSlotId(e.target.value)}
+                                >
+                         
+                             {slot.map((cate,index) => {
+                                return(
+                                    <MenuItem key={index} value={cate.id}>{cate.name}</MenuItem>
+                                )
+                             })}
+                                  
+                                </Select>
+                            </FormControl>
+                        </Box>
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleClose}>
+                        <Button onClick={handleUpdateOrCreate}>
                             Save
                         </Button>
                     </DialogActions>
                 </BootstrapDialog>
                 <div className='pr-5 my-6 float-right'>
-                    <Paper
-                        component="form"
-
-                        sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 300 }}
-                    >
-                        <InputBase
-                            sx={{ ml: 1, flex: 1 }}
-                            placeholder="Search Areas"
-                            inputProps={{ 'aria-label': 'Search Product' }}
-                        />
-                        <IconButton className='' sx={{ p: '10px', outline: "none" }} >
-                            <SearchIcon />
-                        </IconButton>
-                    </Paper>
+                
+                 
+                 <Search parentCallback={callbackSearch} />
+           
                 </div>
                 <TableContainer sx={{}}>
                     <Table stickyHeader aria-label="sticky table">

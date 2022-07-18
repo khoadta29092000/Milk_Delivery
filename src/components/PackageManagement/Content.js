@@ -12,6 +12,25 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import PropTypes from 'prop-types';
+import Button from '@mui/material/Button';
+import { styled } from '@mui/material/styles';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import CloseIcon from '@mui/icons-material/Close';
+import TextField from '@mui/material/TextField';
+import queryString from 'query-string';
+import { useEffect, useState } from "react";
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+    '& .MuiDialogContent-root': {
+        padding: theme.spacing(2),
+    },
+    '& .MuiDialogActions-root': {
+        padding: theme.spacing(1),
+    },
+}));
 
 
 const columns = [
@@ -38,27 +57,79 @@ const columns = [
     },
 ];
 
+const BootstrapDialogTitle = (props) => {
+    const { children, onClose, ...other } = props;
+
+    return (
+        <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+            {children}
+            {onClose ? (
+                <IconButton
+                    aria-label="close"
+                    onClick={onClose}
+                    sx={{
+                        position: 'absolute',
+                        right: 8,
+                        top: 8,
+                        color: (theme) => theme.palette.grey[500],
+                    }}
+                >
+                    <CloseIcon />
+                </IconButton>
+            ) : null}
+        </DialogTitle>
+    );
+};
+
+BootstrapDialogTitle.propTypes = {
+    children: PropTypes.node,
+    onClose: PropTypes.func.isRequired,
+};
 
 export default function Content() {
-    function createData(img, Title, Category) {
-        let  Image = (
+    const [open, setOpen] = React.useState(false);
+    const [selectedValue, setSelectedValue] = React.useState([]);
+   
+    const handleClickOpen = (data) => {
+        console.log("111111", data);
+        setOpen(true);
+        setSelectedValue(data);
+        setSelectedImage(data.img);
+    };
+    const handleClose = () => {
+        setOpen(false);
+        setSelectedImage(undefined);
+        SetClick(false);
+    };
+    function createData(data) {
+        let Title = data.Title;
+        let Category = data.Category < 10 ? data.Category : data.Category.slice(0, 10).concat("...");
+        let Image = (
             <img
-            src={img}
-            loading="lazy"
-            className='h-28 w-28'
-          />)
-        let Edit = (<button className="text-white  outline-none bg-blue-600 rounded-lg   h-8 w-8">
+                src={data.img}
+                loading="lazy"
+                className='h-28 w-28'
+            />)
+        let Edit = (<button className="text-white  outline-none bg-blue-600 rounded-lg   h-8 w-8" onClick={() => handleClickOpen(data)}>
             <EditIcon />
         </button>);
-        let Delete = (<button className="text-white  outline-none bg-blue-600 rounded-lg   h-8 w-8">
+        let Delete = (<button className="text-white  outline-none bg-red-600 rounded-lg   h-8 w-8">
             <DeleteIcon />
         </button>);
-
+ 
         return { Image, Title, Category, Edit, Delete };
     }
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [selectedImage, setSelectedImage] = React.useState();
+    const [click, SetClick] = React.useState(false)
+    const [search, setSearch] = useState("");
 
+   
+    useEffect(() => {
+      
+        setPage(0);
+    }, [search]);
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };
@@ -70,30 +141,85 @@ export default function Content() {
 
     console.log("----------", page, rowsPerPage)
 
+    
+
     const data = [
-        { img: "https://cdn.nguyenkimmall.com/images/companies/_1/tin-tuc/kinh-nghiem-meo-hay/n%E1%BA%A5u%20%C4%83n/uong-sua-hat-giam-can-tot-cho-suc-khoe.jpg", Title: "1 Sữa Tươi, 1 Kem",Category : "Fresh Milk, Kem" },
-        { img: "https://cdn.nguyenkimmall.com/images/companies/_1/tin-tuc/kinh-nghiem-meo-hay/n%E1%BA%A5u%20%C4%83n/uong-sua-hat-giam-can-tot-cho-suc-khoe.jpg", Title: "3 Sữa các loại",Category : "Milk, Milk, Milk, Kem"  },
-        { img: "https://cdn.nguyenkimmall.com/images/companies/_1/tin-tuc/kinh-nghiem-meo-hay/n%E1%BA%A5u%20%C4%83n/uong-sua-hat-giam-can-tot-cho-suc-khoe.jpg", Title: "2 Sữa đậu, 1 Sữa hạt",Category : "Sữa đậu, Sữa đậu, Sữa hạt "  },    
+        { img: "https://cdn.nguyenkimmall.com/images/companies/_1/tin-tuc/kinh-nghiem-meo-hay/n%E1%BA%A5u%20%C4%83n/uong-sua-hat-giam-can-tot-cho-suc-khoe.jpg", Title: "1 Sữa Tươi, 1 Kem", Category: "Fresh Milk, Kem" },
+        { img: "https://cdn.nguyenkimmall.com/images/companies/_1/tin-tuc/kinh-nghiem-meo-hay/n%E1%BA%A5u%20%C4%83n/uong-sua-hat-giam-can-tot-cho-suc-khoe.jpg", Title: "3 Sữa các loại", Category: "Milk, Milk, Milk, Kem" },
+        { img: "https://cdn.nguyenkimmall.com/images/companies/_1/tin-tuc/kinh-nghiem-meo-hay/n%E1%BA%A5u%20%C4%83n/uong-sua-hat-giam-can-tot-cho-suc-khoe.jpg", Title: "2 Sữa đậu, 1 Sữa hạt", Category: "Sữa đậu, Sữa đậu, Sữa hạt " },
     ]
 
     const rows1 = data.map((data, index) => {
-        return (createData(data.img, data.Title, data.Category < 10 ? data.Category : data.Category.slice(0, 10).concat("...") ))
+        return (createData(data))
     })
 
     const rows = [
     ];
+    let Id;
+    if (selectedValue.id != undefined) {
+        Id = (<div className='max-w-5xl my-5 mx-auto'>
+            <TextField className='w-96 my-5' defaultValue={selectedValue.id} disabled id="outlined-basic" label="Id" variant="outlined" />
+        </div>)
+    } else {
+        Id = (<div className='max-w-5xl my-5 mx-auto'>
+            <TextField className='w-96 my-5' defaultValue={selectedValue.id} id="outlined-basic" label="Id" variant="outlined" />
+        </div>)
+    }
 
     return (
         <section className=" ml-0 xl:ml-64  px-5 pt-10  ">
             <Paper className='mt-24 ' sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableHead >
                     <div className='pt-2 pl-4 block font-semibold text-xl'>
-                    Package Management
+                        Package Management
                     </div>
                 </TableHead>
-                <button className='bg-blue-600 text-white rounded-md ml-5 my-6 py-2 px-4'>
+                <button className='bg-blue-600 text-white rounded-md ml-5 my-6 py-2 px-4' onClick={handleClickOpen}>
                     Add Package
                 </button>
+                <BootstrapDialog
+                    onClose={handleClose}
+                    aria-labelledby="customized-dialog-title"
+                    open={open}
+                >
+                    <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
+                        Add Delivery Boy
+                    </BootstrapDialogTitle>
+                    <DialogContent dividers >
+                        {Id}
+                        <div className='max-w-5xl my-5 mx-auto'>
+                            <Button
+                                variant="contained"
+                                component="label"
+                            >
+                                Upload Image
+                                <input
+                                    type="file"
+                                    hidden
+                                    onChange={(event) => {
+                                        setSelectedImage(event.target.files[0]);
+                                        SetClick(true);
+                                    }}
+                                />
+                            </Button>
+                        </div>
+                        <div className='max-w-5xl my-5 mx-auto'>
+                            {selectedImage == undefined ? <div></div> : <img alt="" className='mx-auto h-24 w-24 my-5' src={click == false ? selectedValue.img : window.URL.createObjectURL(selectedImage)} />}
+                        </div>
+                        <div className='max-w-5xl my-5 mx-auto'>
+                            <TextField className='w-96 my-5' defaultValue={selectedValue.Title} autoComplete='off' id="outlined-basic" label="Title" variant="outlined" />
+                        </div>
+                        <div className='max-w-5xl my-5 mx-auto'>
+                            <TextField className='w-96 my-5' autoComplete='off' defaultValue={selectedValue.Category} id="outlined-basic" label="Category" variant="outlined" />
+                        </div>
+                      
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>
+                            Save
+                        </Button>
+                    </DialogActions>
+                </BootstrapDialog>
                 <div className='pr-5 my-6 float-right'>
                     <Paper
                         component="form"
@@ -119,8 +245,7 @@ export default function Content() {
                                     <TableCell
                                         key={column.id}
                                         align={column.align}
-                                        style={{ minWidth: column.minWidth }}
-
+                                        style={{ minWidth: column.minWidth }}   
                                     >
                                         {column.label}
                                     </TableCell>

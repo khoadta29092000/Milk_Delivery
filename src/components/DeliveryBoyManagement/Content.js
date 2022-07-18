@@ -23,7 +23,17 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
+import { useEffect, useState } from "react";
+import Search from 'components/Search';
+import {ref, getDownloadURL, uploadBytesResumable} from "firebase/storage"
+import { storage } from 'firebase';
+import { v4 } from "uuid";
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -89,21 +99,67 @@ BootstrapDialogTitle.propTypes = {
 export default function Content() {
     const [open, setOpen] = React.useState(false);
     const [selectedValue, setSelectedValue] = React.useState([]);
-
+    const [id, setId] = useState("");
+    const [fullName, setFullName] = useState("");
+    const [userName, setUserName] = useState("");
+    const [password, setPassword] = useState("");
+    const [phone, setPhone] = useState("");
+    const [data, setData] = useState([]);
+    const [search, setSearch] = useState("");
+    const [filters, setFilters] = useState({
+        page: 1,
+        pageSize: 10,
+        // title_like: '',
+    })
+    const [click, SetClick] = useState(false)
+    const [selectedImage, setSelectedImage] = useState("");
+    const [img, setImg] = useState("");
+    const [alert, setAlert] = useState(false);
     const handleClickOpen = (data) => {
         console.log("111111", data);
         setOpen(true);
+        setId(data.id);
+        setFullName(data.fullName);
+        setUserName(data.username);
+        setPassword(data.password);
+        setPhone(data.phone);
+        setImg(data.img);
+        setSelectedImage(data.img);
         setSelectedValue(data);
+    };
+    const validName = new RegExp("(?=.{6,30}$)");
+    const validPhone = new RegExp(/(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/);
+    const body =  {   
+        id: id,         
+        fullName: fullName,
+        username: userName,
+        password: password,       
+        phone: phone,
+        img: img
+    };
+    const bodyCreate =  {   
+          
+        fullName: fullName,
+        username: userName,
+        password: password,       
+        phone: phone,
+        img: img
     };
     const handleClose = () => {
         setOpen(false);
-
+        setSelectedImage(undefined);
+        SetClick(false);
+        
     };
+    useEffect(() => {
+        featchDeliveryManList();
+        setPage(0);
+    }, [search] );
     function createData(data) {
 
-        let UserName = data.UserName;
-        let FullName = data.FullName;
-        let PhoneNumber = data.PhoneNumber;
+        let UserName = data.username;
+        let FullName = data.fullName;
+        let PhoneNumber = data.phone;
         let Action = (
             <div>
                 <button className="text-white  outline-none bg-lightblue1 rounded-lg   h-8 w-8" >
@@ -120,7 +176,7 @@ export default function Content() {
                 <button className="text-white mx-2  outline-none bg-blue-600 rounded-lg   h-8 w-8" onClick={() => handleClickOpen(data)}>
                     <EditIcon />
                 </button>
-                <button className="text-white  outline-none bg-red-600 rounded-lg   h-8 w-8">
+                <button className="text-white  outline-none bg-red-600 rounded-lg   h-8 w-8" onClick={() => handleDelete(data)}>
                     <DeleteIcon />
                 </button>
             </div>
@@ -133,8 +189,8 @@ export default function Content() {
             />)
         return { Image, UserName, FullName, PhoneNumber, Action };
     }
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(10);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -144,48 +200,205 @@ export default function Content() {
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
+    function handleSearchTermChange(newFilters) {
+   
+        setFilters({
+            ...filters,
+            page: 1,
+            title_like: newFilters.searchTerm,
+        })
+    }
+    const callbackSearch = (childData) => {
+        setSearch(childData)
 
+    };
+
+    async function featchDeliveryManList() {
+        try {
+    
+         
+          const requestURL = `http://www.subcriptionmilk.somee.com/api/DeliveryMen?search=${search}`;
+    
+          const response = await fetch(requestURL, {
+            method: `GET`,
+            headers: {
+              'Content-Type': 'application/json',
+             
+            },
+          });
+          const responseJSON = await response.json();
+    
+          const  data  = responseJSON;
+    
+          setData(responseJSON.data)
+        
+       console.log("aa fetch", responseJSON.data)
+    
+        } catch (error) {
+          console.log('Fail to fetch product list: ', error)
+        }
+      }
+
+      console.log("aa fetch", data)
+    
     let Id;
-    if (selectedValue.id != undefined) {
+    if (id != undefined) {
         Id = (<div className='max-w-5xl my-5 mx-auto'>
-            <TextField className='w-96 my-5' defaultValue={selectedValue.id} disabled id="outlined-basic" label="Id" variant="outlined" />
+            <TextField className='w-96 my-5' defaultValue={id}  onChange={e => setId(e.target.value)} disabled id="outlined-basic" label="Id" variant="outlined" />
         </div>)
     } else {
-        Id = (<div className='max-w-5xl my-5 mx-auto'>
-            <TextField className='w-96 my-5' defaultValue={selectedValue.id}   id="outlined-basic" label="Id" variant="outlined" />
-        </div>)
+        
     }
 
 
     console.log("----------", page, rowsPerPage)
 
-    const data = [
-        { id: 1, img: "https://video.fsgn2-2.fna.fbcdn.net/v/t1.6435-9/169145499_493556071827341_1392585511388666934_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=174925&_nc_ohc=v2aO4n689XUAX8wZK87&_nc_ht=video.fsgn2-2.fna&oh=00_AT-xIG9h9kjt_UeDR1i2nAwgcUttD9KxkrGWqAVluQfEjw&oe=62C3AAA2", UserName: "tiensidien1234@gmail.com", FullName: "Đỗ Trần Anh Khoa", phone: "0335739928", password: "khoa" },
-        { id: 2, img: "https://video.fsgn2-2.fna.fbcdn.net/v/t1.6435-9/169145499_493556071827341_1392585511388666934_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=174925&_nc_ohc=v2aO4n689XUAX8wZK87&_nc_ht=video.fsgn2-2.fna&oh=00_AT-xIG9h9kjt_UeDR1i2nAwgcUttD9KxkrGWqAVluQfEjw&oe=62C3AAA2", UserName: "Ytiet@gmail.com", FullName: "Y Tiết", phone: "0151234156", password: "khoa" },
-        { id: 3, img: "https://video.fsgn2-2.fna.fbcdn.net/v/t1.6435-9/169145499_493556071827341_1392585511388666934_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=174925&_nc_ohc=v2aO4n689XUAX8wZK87&_nc_ht=video.fsgn2-2.fna&oh=00_AT-xIG9h9kjt_UeDR1i2nAwgcUttD9KxkrGWqAVluQfEjw&oe=62C3AAA2", UserName: "tiensidien1234@gmail.com", FullName: "Đỗ Trần Anh Khoa", phone: "0335739928" },
-        { id: 4, img: "https://video.fsgn2-2.fna.fbcdn.net/v/t1.6435-9/169145499_493556071827341_1392585511388666934_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=174925&_nc_ohc=v2aO4n689XUAX8wZK87&_nc_ht=video.fsgn2-2.fna&oh=00_AT-xIG9h9kjt_UeDR1i2nAwgcUttD9KxkrGWqAVluQfEjw&oe=62C3AAA2", UserName: "tiensidien1234@gmail.com", FullName: "Đỗ Trần Anh Khoa", phone: "0335739928" },
-        { id: 5, img: "https://video.fsgn2-2.fna.fbcdn.net/v/t1.6435-9/169145499_493556071827341_1392585511388666934_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=174925&_nc_ohc=v2aO4n689XUAX8wZK87&_nc_ht=video.fsgn2-2.fna&oh=00_AT-xIG9h9kjt_UeDR1i2nAwgcUttD9KxkrGWqAVluQfEjw&oe=62C3AAA2", UserName: "tiensidien1234@gmail.com", FullName: "Đỗ Trần Anh Khoa", phone: "0335739928" },
-        { id: 6, img: "https://video.fsgn2-2.fna.fbcdn.net/v/t1.6435-9/169145499_493556071827341_1392585511388666934_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=174925&_nc_ohc=v2aO4n689XUAX8wZK87&_nc_ht=video.fsgn2-2.fna&oh=00_AT-xIG9h9kjt_UeDR1i2nAwgcUttD9KxkrGWqAVluQfEjw&oe=62C3AAA2", UserName: "tiensidien1234@gmail.com", FullName: "Đỗ Trần Anh Khoa", phone: "0335739928" },
-        { id: 7, img: "https://video.fsgn2-2.fna.fbcdn.net/v/t1.6435-9/169145499_493556071827341_1392585511388666934_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=174925&_nc_ohc=v2aO4n689XUAX8wZK87&_nc_ht=video.fsgn2-2.fna&oh=00_AT-xIG9h9kjt_UeDR1i2nAwgcUttD9KxkrGWqAVluQfEjw&oe=62C3AAA2", UserName: "tiensidien1234@gmail.com", FullName: "Đỗ Trần Anh Khoa", phone: "0335739928" },
-        { id: 8, img: "https://video.fsgn2-2.fna.fbcdn.net/v/t1.6435-9/169145499_493556071827341_1392585511388666934_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=174925&_nc_ohc=v2aO4n689XUAX8wZK87&_nc_ht=video.fsgn2-2.fna&oh=00_AT-xIG9h9kjt_UeDR1i2nAwgcUttD9KxkrGWqAVluQfEjw&oe=62C3AAA2", UserName: "tiensidien1234@gmail.com", FullName: "Đỗ Trần Anh Khoa", phone: "0335739928" },
-        { id: 9, img: "https://video.fsgn2-2.fna.fbcdn.net/v/t1.6435-9/169145499_493556071827341_1392585511388666934_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=174925&_nc_ohc=v2aO4n689XUAX8wZK87&_nc_ht=video.fsgn2-2.fna&oh=00_AT-xIG9h9kjt_UeDR1i2nAwgcUttD9KxkrGWqAVluQfEjw&oe=62C3AAA2", UserName: "tiensidien1234@gmail.com", FullName: "Đỗ Trần Anh Khoa", phone: "0335739928" },
-        { id: 10, img: "https://video.fsgn2-2.fna.fbcdn.net/v/t1.6435-9/169145499_493556071827341_1392585511388666934_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=174925&_nc_ohc=v2aO4n689XUAX8wZK87&_nc_ht=video.fsgn2-2.fna&oh=00_AT-xIG9h9kjt_UeDR1i2nAwgcUttD9KxkrGWqAVluQfEjw&oe=62C3AAA2", UserName: "tiensidien1234@gmail.com", FullName: "Đỗ Trần Anh Khoa", phone: "0335739928" },
-        { id: 11, img: "https://video.fsgn2-2.fna.fbcdn.net/v/t1.6435-9/169145499_493556071827341_1392585511388666934_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=174925&_nc_ohc=v2aO4n689XUAX8wZK87&_nc_ht=video.fsgn2-2.fna&oh=00_AT-xIG9h9kjt_UeDR1i2nAwgcUttD9KxkrGWqAVluQfEjw&oe=62C3AAA2", UserName: "tiensidien1234@gmail.com", FullName: "Đỗ Trần Anh Khoa", phone: "0335739928" },
-        { id: 12, img: "https://video.fsgn2-2.fna.fbcdn.net/v/t1.6435-9/169145499_493556071827341_1392585511388666934_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=174925&_nc_ohc=v2aO4n689XUAX8wZK87&_nc_ht=video.fsgn2-2.fna&oh=00_AT-xIG9h9kjt_UeDR1i2nAwgcUttD9KxkrGWqAVluQfEjw&oe=62C3AAA2", UserName: "tiensidien1234@gmail.com", FullName: "Đỗ Trần Anh Khoa", phone: "0335739928" },
-
-    ]
-
     const rows1 = data.map((data, index) => {
-
         return (createData(data))
-
     })
+    const [progresspercent, setProgresspercent] = useState(0);
 
-    const rows = [
-    ];
+async function handleUpload(){
+    if(click == false){setImg(selectedImage)}
+        else{
+            const storageRef =  ref(storage, `deliveryman/${selectedImage.name + v4()}`);
+            const uploadTask =  uploadBytesResumable(storageRef, selectedImage);
+              uploadTask.on("state_changed",
+              (snapshot) => {
+                const progress =
+                  Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                setProgresspercent(progress);
+              },
+              (error) => {
+                alert(error);
+              },
+              () => {
+                  getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>  {
+                setImg(downloadURL)
+                });
+              }
+            );
+        }
+}
+const [phoneErrorr, setPhoneErrorr] = useState(false)
+const [nameError, setNameError] = useState(false)
+const [message, setMess] = useState(false)
+    async function handleUpdateOrCreate()  {     
+        if (!validName.test(fullName) || !validName.test(password)  || !validName.test(userName)) {
+            setNameError(true)
+            setPhoneErrorr(false)
+        }else if (!validPhone.test(phone)) {
+            setNameError(false)
+            setPhoneErrorr(true)
+        } else {
+            
+            setNameError(false)
+            setPhoneErrorr(false)
+            if(selectedValue.id != undefined){
+                const res = await fetch(`http://www.subcriptionmilk.somee.com/api/DeliveryMen/update`, {
+                    method: `PUT`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                       
+                    },
+                    body: JSON.stringify(body)
+                }).then(res => res.json())
+                    .then(result => {
+        
+                        if (result) {
+                            if (result?.statusCode == 201) {
+                                setMess("Update Successfullly")
+                                setAlert(true)
+                                handleClose();
+                                featchDeliveryManList();
+                            }
+        
+                        } else {
+                            alert("Update UnSuccessfullly")
+                        }
+                        return res
+        
+                    })
+                    .catch((error) => {
+                        throw ('Invalid Token')
+                    })
+                return body
+              
+            }else{
+                const res = await fetch(`http://www.subcriptionmilk.somee.com/api/DeliveryMen/create`, {
+                    method: `POST`,
+                    headers: {
+                        'Content-Type': 'application/json',
+                       
+                    },
+                    body: JSON.stringify(bodyCreate)
+                }).then(res => res.json())
+                    .then(result => {
+        
+                        if (result) {
+                            if (result?.statusCode == 201) {
+                                 setMess("Add Successfullly")
+                                 setAlert(true)
+                                handleClose();
+                                featchDeliveryManList();
+                            }
+        
+                        } else {
+                            alert("Add UnSuccessfullly")
+                        }
+                        return res
+        
+                    })
+                    .catch((error) => {
+                        throw ('Invalid Token')
+                    })
+                return body         
+                }
+            }           
+        }
+        async function handleDelete(data) {
 
+            let res = await fetch(`http://www.subcriptionmilk.somee.com/api/DeliveryMen/${data?.id}`, {
+                method: `DELETE`,
+                headers: {
+                    'Content-Type': 'application/json',
+                  
+                },
+            }).then(res => res.json())
+                .then(result => {
+    
+                    if (result?.statusCode === 200) {
+                        setMess(result.content)
+                        setAlert(true)
+                        featchDeliveryManList();
+                    } else {
+                        alert("delete thất bại")
+                        // setError(result.message)
+                        // alert("tài khoản hoặc mật khẩu sai kìa")
+                    }
+                    return res
+    
+                })
+                .catch((error) => {
+                    throw ('Invalid Token')
+                })
+            return res
+        }
+        const handleCloseAlert = (event, reason) => {
+            if (reason === "clickaway") {
+              return;
+            }
+        
+            setAlert(false);
+          };
+console.log("selected img", selectedValue.id)
     return (
         <section className=" ml-0 xl:ml-64  px-5 pt-10  ">
+              <Snackbar open={alert} autoHideDuration={4000} onClose={handleCloseAlert} className="float-left w-screen">
+                    <Alert onClose={handleCloseAlert} severity="success" >
+                        {message}
+                    </Alert>
+                </Snackbar>
             <Paper className='' sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableHead >
                     <div className='pt-2 pl-4 block font-semibold text-xl'>
@@ -200,46 +413,67 @@ export default function Content() {
                     aria-labelledby="customized-dialog-title"
                     open={open}
                 >
-                    <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
+                    <BootstrapDialogTitle onClose={handleClose}>
                         Add Delivery Boy
                     </BootstrapDialogTitle>
                     <DialogContent dividers >
+                    {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 6 - 30 character </div>}
+                    
+                    {phoneErrorr && <div className='text-red-600 ml-11 mb-5 text-xl'>phone must be valid</div>}
+               
                        {Id}
-                        <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' defaultValue={selectedValue.UserName} id="outlined-basic" label="Full Name" variant="outlined" />
+                       <div className='max-w-5xl my-5 mx-auto'>
+                            <Button
+                                variant="contained"
+                                component="label"
+                                className='bg-blue-600 text-white rounded-md ml-5 my-6 py-2 px-4' 
+                            >
+                                Upload Image
+                                <input
+                                    type="file"
+                                    hidden
+                                    
+                                    onChange={(event) => {
+                                        setSelectedImage(event.target.files[0]);
+                                        SetClick(true);
+                                      
+                                    }}
+                                />
+                            </Button>
+                     
                         </div>
                         <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' defaultValue={selectedValue.FullName} autoComplete='off' id="outlined-basic" label="Username" variant="outlined" />
+                            {selectedImage == undefined ? <div></div> : <img  alt="" className='mx-auto h-48 w-48 my-5' src={click == false ? selectedValue.img : window.URL.createObjectURL(selectedImage)} />}
+                        </div>
+                        <Button  variant="contained"
+                                component="label"
+                    
+                                onClick={handleUpload} className='bg-blue-600 text-white rounded-md ml-5 my-6 py-2 px-4' >
+                  Save Img
+                </Button>                                                                           
+                        <div className='max-w-5xl my-5 mx-auto'>
+                            <TextField className='w-96 my-5' onChange={e => setUserName(e.target.value)}  defaultValue={selectedValue.username} id="outlined-basic" label="Full Name" variant="outlined" />
                         </div>
                         <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' autoComplete='off' defaultValue={selectedValue.password} id="outlined-basic" label="Password" variant="outlined" type="password" />
+                            <TextField className='w-96 my-5' onChange={e => setFullName(e.target.value)} defaultValue={selectedValue.fullName} autoComplete='off' id="outlined-basic" label="Username" variant="outlined" />
                         </div>
                         <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' defaultValue={selectedValue.phone} id="outlined-basic" label="Phone" variant="outlined" />
+                            <TextField className='w-96 my-5' onChange={e => setPassword(e.target.value)} autoComplete='off' defaultValue={selectedValue.password} id="outlined-basic" label="Password" variant="outlined" type="password" />
+                        </div>
+                        <div className='max-w-5xl my-5 mx-auto'>
+                            <TextField className='w-96 my-5' onChange={e => setPhone(e.target.value)} defaultValue={selectedValue.phone} id="outlined-basic" label="Phone" variant="outlined" />
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleClose}>
+                        <Button  onClick={handleUpdateOrCreate}>
+                           
                             Save
                         </Button>
                     </DialogActions>
                 </BootstrapDialog>
                 <div className='pr-5 my-6 float-right'>
-                    <Paper
-                        component="form"
-
-                        sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 300 }}
-                    >
-                        <InputBase
-                            sx={{ ml: 1, flex: 1 }}
-                            placeholder="Search Member"
-                            inputProps={{ 'aria-label': 'Search Product' }}
-                        />
-                        <IconButton className='' sx={{ p: '10px', outline: "none" }} >
-                            <SearchIcon />
-                        </IconButton>
-
-                    </Paper>
+                 
+                    <Search parentCallback={callbackSearch} />
                 </div>
                 <TableContainer sx={{}}>
                     <Table stickyHeader aria-label="sticky table">

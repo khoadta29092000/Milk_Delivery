@@ -21,6 +21,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 
 
@@ -91,12 +96,13 @@ BootstrapDialogTitle.propTypes = {
 export default function Content() {
     const [open, setOpen] = React.useState(false);
     const [selectedValue, setSelectedValue] = React.useState([]);
-
+    const [category, setCategory] = React.useState("");
     const handleClickOpen = (data) => {
         console.log("111111", data);
         setOpen(true);
         setSelectedValue(data);
         setSelectedImage(data.img);
+        setCategory(data.Category)
     };
     const handleClose = () => {
         setOpen(false);
@@ -143,7 +149,14 @@ export default function Content() {
         {id:4 , img: "https://cdn.tgdd.vn/Files/2019/10/03/1204592/sua-hat-la-gi-sua-thao-moc-la-gi-tac-dung-sua-hat-doi-voi-suc-khoe.jpg", Title: "Sữa óc chó",Category : "Sữa hạt"  },
         {id:5 , img: "https://tuikhoeconban.com/wp-content/uploads/2019/03/cach-lam-sua-hat-oc-cho.jpg", Title: "Sữa đậu phộng",Category : "Sữa hạt"  },      
     ]
+    const dataCate = [
+        { id: 1, img: "http://gng.invatomarket.com/public/storage/uploads/GWd73gWqR3xAq0w9L3tHsG3SmFP9B3inxgmvzK9P.png", Title: "Fresh Milk" },
+        { id: 2, img: "http://gng.invatomarket.com/public/storage/uploads/GWd73gWqR3xAq0w9L3tHsG3SmFP9B3inxgmvzK9P.png", Title: "Sữa hạt" },
+        { id: 3, img: "http://gng.invatomarket.com/public/storage/uploads/GWd73gWqR3xAq0w9L3tHsG3SmFP9B3inxgmvzK9P.png", Title: "Sữa đậu nành" },
+        { id: 4, img: "http://gng.invatomarket.com/public/storage/uploads/GWd73gWqR3xAq0w9L3tHsG3SmFP9B3inxgmvzK9P.png", Title: "Sữa đậu" },
+        { id: 5, img: "http://gng.invatomarket.com/public/storage/uploads/GWd73gWqR3xAq0w9L3tHsG3SmFP9B3inxgmvzK9P.png", Title: "kem" },
 
+    ]
     const rows1 = data.map((data, index) => {
         return (createData(data))
     })
@@ -160,7 +173,7 @@ export default function Content() {
             <TextField className='w-96 my-5' defaultValue={selectedValue.id}   id="outlined-basic" label="Id" variant="outlined" />
         </div>)
     }
-
+console.log("---", category)
 
     return (
         <section className=" ml-0 xl:ml-64  px-5 pt-10  ">
@@ -206,8 +219,32 @@ export default function Content() {
                             <TextField className='w-96 my-5' defaultValue={selectedValue.Title} autoComplete='off' id="outlined-basic" label="Title" variant="outlined" />
                         </div>
                         <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' autoComplete='off' defaultValue={selectedValue.Category} id="outlined-basic" label="Category" variant="outlined"  />
+                            <TextField className='w-96 my-5' autoComplete='off' defaultValue={category} id="outlined-basic" label="Category" variant="outlined"  />
                         </div>
+                        <div className='max-w-5xl my-5 mx-auto'>
+                        <Box sx={{ minWidth: 120 }}>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    defaultValu={category}
+                                    label="Category"
+                                    onChange={e => setCategory(e.target.value)}
+                                >
+                         
+                             {dataCate.map((cate,index) => {
+                                return(
+                                    <MenuItem key={index} value={cate.id}>{cate.Title}</MenuItem>
+                                )
+                             })}
+                                  
+                                </Select>
+                            </FormControl>
+                        </Box>
+                        </div>
+                       
+                        
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={handleClose}>

@@ -53,7 +53,7 @@ export default function CategoriesManagement() {
                             <Link underline="hover" className='hover:underline' to="/" color="inherit" >
                                 Home
                             </Link>
-                            <Typography color="text.primary">CategoryS</Typography>
+                            <Typography color="text.primary">Category</Typography>
                         </Breadcrumbs>
                     </div>
                     <div className='mb-12'>
