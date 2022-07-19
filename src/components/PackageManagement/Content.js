@@ -125,8 +125,8 @@ export default function Content() {
         SetClick(false);
    
     };
-    const validName = new RegExp(/^\S{6,30}$/);
-    const validDes = new RegExp(/^\S{6,300}$/);
+    const validName = new RegExp(/^.{6,30}$/);
+    const validDes = new RegExp(/^.{6,300}$/);
     const validNum = new RegExp("^[0-9]*$");
 
     const body = {
@@ -377,7 +377,7 @@ export default function Content() {
                     {message}
                 </Alert>
             </Snackbar>
-            <Paper className='mt-24 ' sx={{ width: '100%', overflow: 'hidden' }}>
+            <Paper className='' sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableHead >
                     <div className='pt-2 pl-4 block font-semibold text-xl'>
                         Package Management
@@ -392,7 +392,7 @@ export default function Content() {
                     open={open}
                 >
                     <BootstrapDialogTitle id="" onClose={handleClose}>
-                        Add Delivery Boy
+                        Package Detail
                     </BootstrapDialogTitle>
                     <DialogContent dividers >
                         {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 6 - 30 character </div>}

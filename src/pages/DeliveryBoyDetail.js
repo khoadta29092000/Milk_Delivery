@@ -59,9 +59,7 @@ export default function DeliveryBoyDetail() {
                             <Typography color="text.primary">Detail</Typography>
                         </Breadcrumbs>
                     </div>
-                    <div className=''>
-                       <Header />
-                    </div>
+      
                     <div className='mb-12'>
                        <Content />
                     </div>

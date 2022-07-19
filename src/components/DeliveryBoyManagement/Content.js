@@ -127,7 +127,7 @@ export default function Content() {
         setSelectedImage(data.img);
         setSelectedValue(data);
     };
-    const validName = new RegExp(/^\S{6,30}$/);
+    const validName = new RegExp(/^.{6,30}$/);
     const validPhone = new RegExp(/(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/);
     const body =  {   
         id: id,         

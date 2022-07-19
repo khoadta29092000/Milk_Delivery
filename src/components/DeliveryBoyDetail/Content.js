@@ -12,6 +12,9 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import Avatar from '@mui/material/Avatar';
 
 
 const columns = [
@@ -45,22 +48,55 @@ const columns = [
         label: 'Completed At',
         minWidth: 150,
     },
-   
+
 ];
 
 
-export default function Content() {
-    function createData(OrderId, Username, PackageName, Area, status, CompletedAt  ) {
-        let Status;
-        if (status === "Finished") {
-            Status = (<div className='text-green-300'> {status} </div>)
-        } else if (status === "Cancel") {
-            Status = (<div className='text-red-400'> {status} </div>)
-        } else {
-            Status = (<div className='text-yellow-300'> {status} </div>)
-        }
+export default function Content(props) {
 
-        return {  OrderId, Username, PackageName, Area,Status, CompletedAt };
+    const { state } = useLocation()
+    const [dataMan, setDataMan] = useState([]);
+    const [dataStation, setDataStation] = useState([]);
+    const [dataPackage, setDataPackage] = useState([]);
+    const [data, setData] = useState([]);
+    const [dataOrder, setDataOrder] = useState([]);
+    const [dataPackageorder, setDataPackageorder] = useState([]);
+    function createData(data) {
+        console.log("đasadsadas", data)
+        let OrderId = data.id;
+
+        let Username;
+        dataPackageorder.map(item => {
+            if (data.pacakeOrderId == item.id) {
+                return Username = item.fullName
+            }
+        })
+        let Status = data.status;
+
+        let PackageName;
+        dataPackageorder.map(item => {
+            if (data.pacakeOrderId == item.id) {
+                dataPackage.map(itemPack => {
+                    if (itemPack.id == item.packageId) {
+                        return PackageName = itemPack.title
+                    }
+                })
+            }
+        })
+        let Area;
+        dataPackageorder.map(item => {
+            if (data.pacakeOrderId == item.id) {
+                dataStation.map(station => {
+                    if (station.id == item.stationId) {
+                        return Area = station.title
+                    }
+                })
+            }
+        })
+        let CompletedAt = data.day.slice(8, 10) + "/" + data.day.slice(5, 7) + "/" + data.day.slice(0, 4);;
+
+
+        return { OrderId, Username, PackageName, Area, Status, CompletedAt };
     }
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -75,49 +111,203 @@ export default function Content() {
     };
 
     console.log("----------", page, rowsPerPage)
-
-    const data = [
-        { id: 1, username:"khoa", PackageName: "3 Sữa các loại" ,name: "Chung cư lô A", status: "Finished", CompletedAt: "07/06/2022" },
-        { id: 2, username:"Việt", PackageName: "2 Sữa đậu, 1 Sữa hạt" ,name: "LandMark Park", status: "Finished", CompletedAt: "08/06/2022" },
-        { id: 3, username:"Gosu", PackageName: "2 Sữa đậu, 1 Sữa hạt",name: "Ocen City",status: "Finished", CompletedAt: "05/06/2022" },
-        { id: 4, username:"Baker", PackageName: "3 Sữa các loại",name: "Ceberus",status: "Finished", CompletedAt: "04/06/2022"  },
-        { id: 5, username:"Zeros", PackageName: "3 Sữa các loại",name: "SBTC Entertainment",status: "Finished", CompletedAt: "07/06/2022"  },
-    ]
-
-    const rows1 = data.map((data, index) => {
-        return (createData(data.id, data.username,  data.PackageName, data.name, data.status, data.CompletedAt,))
+    const filterListOrder = [];
+    data.map(item => {
+        dataOrder.filter(order => {
+            if (item.id == order.deliveryTripId) {
+                return filterListOrder.push(order)
+            }
+        })
     })
+    console.log("list nme ena", filterListOrder)
 
-    const rows = [
-    ];
+    const rows1 = filterListOrder.map((data, index) => {
+        return (createData(data))
+    })
+    useEffect(() => {
+        featchStationList();
+        featchDeliveryInMemberList();
+        featchOrderList();
+        featchPackageOrderList();
+        featchPackageList();
+        featchDeliveryMemById();
+        setPage(0);
+    }, [state]);
+    async function featchPackageList() {
+        try {
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Packages/Getallpackages`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataPackage(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+    async function featchStationList() {
+        try {
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Stations/Getallstations`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataStation(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+    async function featchOrderList() {
+        try {
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Orders/Getallorder`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataOrder(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+    async function featchPackageOrderList() {
+        try {
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/PackageOrders/Getallpackageorder`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataPackageorder(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+    async function featchDeliveryInMemberList() {
+        try {
+
+
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/DeliveryTrips/Getalldeliverytrip?search=${state?.name}`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setData(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+    async function featchDeliveryMemById() {
+        try {
+
+
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/DeliveryMen/getbyid?id=${state?.name}`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+            setDataMan(responseJSON.data)
+
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
 
     return (
         <section className=" ml-0 xl:ml-64  px-5 pt-10  ">
+
+
+            <Paper className=' mb-10  block '  >
+                
+
+                {dataMan.map(item => {
+                    return (<div className="flex flex-col h-auto mt-4 mx-auto justify-center text-center  items-center ">
+                        <Avatar
+                            className="mt-5"
+                            style={{alignSelf: 'center'}} 
+                            sx={{ width: 160, height: 160 }}
+                            src={item.img}
+                        /> 
+                        <h2 className='font-bold  text-3xl my-3'>{item.fullName}</h2>
+                        <p className='mb-5'>{item.phone}</p>
+                    </div>)
+                })}
+
+                
+            </Paper>
+            
+
             <Paper className='5' sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableHead >
                     <div className='pt-2 pl-4 block font-semibold text-xl'>
-                    Areas Management
+                        Areas Management
                     </div>
                 </TableHead>
                 <button className='bg-blue-600 text-white rounded-md ml-5 my-6 py-2 px-4'>
                     Add Areas
                 </button>
-                <div className='pr-5 my-6 float-right'>
-                    <Paper
-                        component="form"
 
-                        sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 300 }}
-                    >
-                        <InputBase
-                            sx={{ ml: 1, flex: 1 }}
-                            placeholder="Search"
-                            inputProps={{ 'aria-label': 'Search Product' }}
-                        />
-                        <IconButton className='' sx={{ p: '10px', outline: "none" }} >
-                            <SearchIcon />
-                        </IconButton>
-                    </Paper>
-                </div>
                 <TableContainer sx={{}}>
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead className='z-0'>

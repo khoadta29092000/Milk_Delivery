@@ -124,8 +124,8 @@ export default function Content() {
         setSelectedImage(undefined);
         SetClick(false);
     };
-    const validName = new RegExp(/^\S{6,30}$/);
-    const validDes = new RegExp(/^\S{6,300}$/);
+    const validName = new RegExp(/^.{6,30}$/);
+    const validDes = new RegExp(/^.{6,300}$/);
     const body =  {   
         id: id,         
         title: title,
@@ -161,7 +161,7 @@ export default function Content() {
                 to={{
                     pathname: "/ProductsManagement",
                     state: {
-                        name: Title
+                        name: data.id
                     }
                 }} className="">
                 <button className="text-white  outline-none bg-green-500 px-3 py-2 rounded-xl  ">

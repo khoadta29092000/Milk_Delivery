@@ -110,8 +110,8 @@ export default function Content() {
     const [data, setData] = useState([]);
     const [search, setSearch] = useState("");
     const [alert, setAlert] = useState(false);
-    const validName = new RegExp(/^\S{6,30}$/);
-    const validDes = new RegExp(/^\S{6,300}$/);
+    const validName = new RegExp(/^.{6,30}$/);
+    const validDes = new RegExp(/^.{6,300}$/);
     const body =  {   
         id: id,         
         title: title,
@@ -346,11 +346,11 @@ export default function Content() {
             <Paper className=' ' sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableHead >
                     <div className='pt-2 pl-4 block font-semibold text-xl'>
-                        Areas Management
+                        Station Management
                     </div>
                 </TableHead>
                 <button className='bg-blue-600 text-white rounded-md ml-5 my-6 py-2 px-4' onClick={handleClickOpen}>
-                    Add Areas
+                    Add Station
                 </button>
                 <BootstrapDialog
                     onClose={handleClose}
@@ -358,7 +358,7 @@ export default function Content() {
                     open={open}
                 >
                     <BootstrapDialogTitle id="" onClose={handleClose}>
-                        Add Delivery Boy
+                        Station Detail
                     </BootstrapDialogTitle>
                     <DialogContent dividers >
                     {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 6 - 30 character </div>}

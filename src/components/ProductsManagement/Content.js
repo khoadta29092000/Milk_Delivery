@@ -33,7 +33,7 @@ import { storage } from 'firebase';
 import { v4 } from "uuid";
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-
+import { useLocation } from 'react-router-dom';
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
@@ -108,13 +108,15 @@ BootstrapDialogTitle.propTypes = {
 };
 
 export default function Content() {
+    const { state } = useLocation()
+   
     const [open, setOpen] = React.useState(false);
     const [selectedValue, setSelectedValue] = React.useState([]);
     const [id, setId] = useState("");
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [img, setImg] = useState("");
-    const [categoryId, setCategoryId] = useState("");
+    const [categoryId, setCategoryId] = useState(state?.name == undefined ? "" : state?.name);
     const [supplierId, setsupplierId] = useState("");
     const [dataCate, setDataCate] = useState([]);
     const [data, setData] = useState([]);
@@ -139,14 +141,16 @@ export default function Content() {
         setSelectedImage(undefined);
         SetClick(false);
     };
-    const validName = new RegExp(/^\S{6,30}$/);
-    const validDes = new RegExp(/^\S{6,300}$/);
+    const validName = new RegExp(/^.{6,30}$/);
+    const validDes = new RegExp(/^.{6,300}$/);
     const body = {
         id: id,
         title: title,
         description: description,
         img: img,
-        active: "1"
+        active: "1",
+        categoryId: categoryId,
+        supplierId: supplierId
     };
     function createData(data) {
         let Title = data.title;
@@ -171,17 +175,18 @@ export default function Content() {
         let Edit = (<button className="text-white  outline-none bg-blue-600 rounded-lg   h-8 w-8" onClick={() => handleClickOpen(data)}>
             <EditIcon />
         </button>);
-        let Delete = (<button className="text-white  outline-none bg-red-600 rounded-lg   h-8 w-8"onClick={() => handleDelete(data)}>
+        let Delete = (<button className="text-white  outline-none bg-red-600 rounded-lg   h-8 w-8" onClick={() => handleDelete(data)}>
             <DeleteIcon />
         </button>);
 
         return { Image, Title, Category, Supplier, Edit, Delete };
     }
     useEffect(() => {
+  
         featchCategoryList();
         featchProductList();
         setPage(0);
-    }, [search]);
+    }, [search, categoryId]);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [selectedImage, setSelectedImage] = React.useState();
@@ -213,7 +218,7 @@ export default function Content() {
     let Id;
     if (selectedValue.id != undefined) {
         Id = (<div className='max-w-5xl my-5 mx-auto'>
-            <TextField className='w-96 my-5'  defaultValue={id} disabled id="outlined-basic" label="Id" variant="outlined" />
+            <TextField className='w-96 my-5' defaultValue={id} disabled id="outlined-basic" label="Id" variant="outlined" />
         </div>)
     } else {
         Id = (<div className='max-w-5xl my-5 mx-auto'>
@@ -249,7 +254,7 @@ export default function Content() {
         try {
 
 
-            const requestURL = `http://www.subcriptionmilk.somee.com/api/Products/Getallproduct?search=${search}`;
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Products/Getallproduct?search=${search}&filter=${categoryId}`;
 
             const response = await fetch(requestURL, {
                 method: `GET`,
@@ -377,32 +382,32 @@ export default function Content() {
         }
     }
     async function handleDelete(data) {
-       
+
         let res = await fetch(`http://www.subcriptionmilk.somee.com/api/Products/${data?.id}`, {
             method: `DELETE`,
             headers: {
                 'Content-Type': 'application/json',
 
             },
-        }).then(function(response) {
-            if(response.ok) {
-              return response.blob();
-          }
-          throw new Error('Not Delete Bacause Product In Order');
-         }).then(result => { 
-           
-                setMess(result.content)
-                setAlert(true)
-                setStatus("success")
-                featchCategoryList();
-            
-         }).catch(function(error) {
-          console.log('There has been a problem with your fetch operation: ', 
-          );
-          setStatus("warning")
-          setMess(error.message)
-          setAlert(true)
-         });
+        }).then(function (response) {
+            if (response.ok) {
+                return response.blob();
+            }
+            throw new Error('Not Delete Bacause Product In Order');
+        }).then(result => {
+
+            setMess("Delete Successfully")
+            setAlert(true)
+            setStatus("success")
+            featchProductList();
+
+        }).catch(function (error) {
+            console.log('There has been a problem with your fetch operation: ',
+            );
+            setStatus("warning")
+            setMess(error.message)
+            setAlert(true)
+        });
     }
     const handleCloseAlert = (event, reason) => {
         if (reason === "clickaway") {
@@ -422,15 +427,45 @@ export default function Content() {
                     {message}
                 </Alert>
             </Snackbar>
-            <Paper className='mt-24 ' sx={{ width: '100%', overflow: 'hidden' }}>
+            <Paper className='' sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableHead >
                     <div className='pt-2 pl-4 block font-semibold text-xl'>
                         Product Management
                     </div>
                 </TableHead>
-                <button className='bg-blue-600 text-white rounded-md ml-5 my-6 py-2 px-4' onClick={handleClickOpen}>
-                    Add Product
-                </button>
+
+                <div className='float-left ml-5 gap-5 my-6  grid grid-cols-6'>
+                    <div className='col-span-1 outline-none hover:outline-none'>
+                        <button className='bg-blue-600 text-white rounded-md ml-5 mt-2 py-2 px-4' onClick={handleClickOpen}>
+                            Add Product
+                        </button>
+
+
+                    </div>
+                    <div className='col-span-2 w-full'>
+                        <Box sx={{ maxWidth: 420, width: 320 }}>
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    defaultValue={categoryId}
+                                    label="Category"
+                                    onChange={e => setCategoryId(e.target.value)}
+                                >
+                          <MenuItem  value={""}>All</MenuItem>
+                                    {dataCate.map((cate, index) => {
+                                        return (
+                                            <MenuItem key={index} value={cate.id}>{cate.title}</MenuItem>
+                                        )
+                                    })}
+
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </div>
+
+                </div>
                 <BootstrapDialog
                     onClose={handleClose}
                     aria-labelledby="customized-dialog-title"
@@ -438,7 +473,7 @@ export default function Content() {
                 >
 
                     <BootstrapDialogTitle id="" onClose={handleClose}>
-                        Add Delivery Boy
+                        Product Details
                     </BootstrapDialogTitle>
                     <DialogContent dividers >
                         {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 6 - 30 character </div>}
@@ -475,7 +510,7 @@ export default function Content() {
                         </div>
 
                         <div className='max-w-5xl my-5 mx-auto'>
-                        <Box sx={{ minWidth: 120 }}>
+                            <Box sx={{ minWidth: 120 }}>
                                 <FormControl fullWidth>
                                     <InputLabel id="demo-simple-select-label">Category</InputLabel>
                                     <Select
@@ -521,7 +556,7 @@ export default function Content() {
                         </div>
                         <div className='max-w-5xl my-5 mx-auto'>
                             <label for="message" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Description</label>
-                            <textarea id="message"  onChange={e => setDescription(e.target.value)} defaultValue={selectedValue.description} rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your message..."></textarea>
+                            <textarea id="message" onChange={e => setDescription(e.target.value)} defaultValue={selectedValue.description} rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Your message..."></textarea>
                         </div>
                     </DialogContent>
                     <DialogActions>
@@ -530,8 +565,13 @@ export default function Content() {
                         </Button>
                     </DialogActions>
                 </BootstrapDialog>
-                <div className='pr-5 my-6 float-right'>
-                <Search parentCallback={callbackSearch} />
+
+
+
+
+                <div className='pr-5 my-6  float-right'>
+
+                    <Search parentCallback={callbackSearch} />
 
                 </div>
                 <TableContainer sx={{}}>

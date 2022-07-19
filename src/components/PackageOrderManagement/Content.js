@@ -11,7 +11,7 @@ import InputBase from '@mui/material/InputBase';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-
+import { useEffect, useState } from "react";
 
 const columns = [
     { id: 'UserName', label: "User Name", minWidth: 150 },
@@ -39,7 +39,29 @@ const columns = [
 
 
 export default function Content() {
-    function createData(UserName, PackageName, StartDay, EndDay) {
+    const [dataAcc, setDataAcc] = useState([]);
+    const [dataPackageorder, setDataPackageorder] = useState([]);
+    const [dataPackage, setDataPackage] = useState([]);
+    const [search, setSearch] = useState("");
+    function createData(data) {
+        let UserName;
+        
+                dataAcc.map(name => {
+                    if (name.id == data.customerId) {
+                        return UserName = name.fullname
+                    }
+                })
+           
+        let PackageName;
+        
+                dataPackage.map(itemPack => {
+                    if (itemPack.id == data.packageId) {
+                        return PackageName = itemPack.title
+                    }
+                })
+           
+        let StartDay = data.startTime.slice(8,10) + "/" +data.startTime.slice(5,7) + "/" + data.startTime.slice(0,4);
+        let EndDay = data.endTime.slice(8,10) + "/" +data.endTime.slice(5,7) + "/" + data.endTime.slice(0,4);
         let View = (<button className="text-white  outline-none bg-blue-600 rounded-lg   h-8 w-8">
         <RemoveRedEyeIcon />
       </button>);
@@ -58,27 +80,85 @@ export default function Content() {
     };
 
     console.log("----------", page, rowsPerPage)
+    useEffect(() => {   
+        featchAccList();
+        featchPackageOrderList();
+        featchPackageList();
+        setPage(0);
+    }, [search]);
+    async function featchAccList() {
+        try {
 
-    const data = [
-        { UserName : "Đỗ Trần Anh Khoa", PackageName : "3 Sữa các loại", StartDay: "06/26/2022", EndDay: "07/26/2022" },
-        { UserName : "Đỗ Trần Anh Khoa", PackageName : "3 Sữa các loại", StartDay: "06/26/2022", EndDay: "07/26/2022" },
-        { UserName : "Đỗ Trần Anh Khoa", PackageName : "3 Sữa các loại", StartDay: "06/26/2022", EndDay: "07/26/2022" },
-        { UserName : "Đỗ Trần Anh Khoa", PackageName : "3 Sữa các loại", StartDay: "06/26/2022", EndDay: "07/26/2022" },
-        { UserName : "Đỗ Trần Anh Khoa", PackageName : "3 Sữa các loại", StartDay: "06/26/2022", EndDay: "07/26/2022" },
-        { UserName : "Đỗ Trần Anh Khoa", PackageName : "3 Sữa các loại", StartDay: "06/26/2022", EndDay: "07/26/2022" },
-        { UserName : "Đỗ Trần Anh Khoa", PackageName : "3 Sữa các loại", StartDay: "06/26/2022", EndDay: "07/26/2022" },
-        { UserName : "Đỗ Trần Anh Khoa", PackageName : "3 Sữa các loại", StartDay: "06/26/2022", EndDay: "07/26/2022" },
-        { UserName : "Đỗ Trần Anh Khoa", PackageName : "3 Sữa các loại", StartDay: "06/26/2022", EndDay: "07/26/2022" },
-        { UserName : "Đỗ Trần Anh Khoa", PackageName : "3 Sữa các loại", StartDay: "06/26/2022", EndDay: "07/26/2022" },
-        { UserName : "Đỗ Trần Anh Khoa", PackageName : "3 Sữa các loại", StartDay: "06/26/2022", EndDay: "07/26/2022" },
-        { UserName : "Đỗ Trần Anh Khoa", PackageName : "3 Sữa các loại", StartDay: "06/26/2022", EndDay: "07/26/2022" },
-        { UserName : "Đỗ Trần Anh Khoa", PackageName : "3 Sữa các loại", StartDay: "06/26/2022", EndDay: "07/26/2022" },
-        { UserName : "Đỗ Trần Anh Khoa", PackageName : "3 Sữa các loại", StartDay: "06/26/2022", EndDay: "07/26/2022" },
-        { UserName : "Đỗ Trần Anh Khoa", PackageName : "3 Sữa các loại", StartDay: "06/26/2022", EndDay: "07/26/2022" },
-    ]
 
-    const rows1 = data.map((data, index) => {
-        return (createData( data.UserName, data.PackageName, data.StartDay, data.EndDay));
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Accounts`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataAcc(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+    async function featchPackageOrderList() {
+        try {
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/PackageOrders/Getallpackageorder`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataPackageorder(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+    async function featchPackageList() {
+        try {
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Packages/Getallpackages`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataPackage(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+    const rows1 = dataPackageorder.map((data, index) => {
+        return (createData( data));
     })
 
     const rows = [
@@ -86,7 +166,7 @@ export default function Content() {
 
     return (
         <section className=" ml-0 xl:ml-64  px-5 pt-10  ">
-            <Paper className='mt-24 ' sx={{ width: '100%', overflow: 'hidden' }}>
+            <Paper className='' sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableHead >
                     <div className='pt-2 pl-4 block font-semibold text-xl'>
                     Package Order Management

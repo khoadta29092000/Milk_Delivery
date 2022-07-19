@@ -144,7 +144,7 @@ export default function Content() {
     SetClick(false);
 
   };
-  const validName = new RegExp(/^\S{4,3000}$/);
+  const validName = new RegExp(/^.{4,3000}$/);
   const validPhone = new RegExp(/(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/);
   const validNum = new RegExp("^[0-9]*$");
 
@@ -335,10 +335,10 @@ export default function Content() {
                         {message}
                     </Alert>
                 </Snackbar>
-      <Paper className='mt-24 ' sx={{ width: '100%', overflow: 'hidden' }}>
+      <Paper className=' ' sx={{ width: '100%', overflow: 'hidden' }}>
         <TableHead >
           <div className='pt-2 pl-4 block font-semibold text-xl'>
-            Admins Management
+            Customer Management
           </div>
         </TableHead>  
         <BootstrapDialog
@@ -347,7 +347,7 @@ export default function Content() {
                     open={open}
                 >
                     <BootstrapDialogTitle onClose={handleClose}>
-                        Add Delivery Boy
+                        Customer Detail
                     </BootstrapDialogTitle>
                     <DialogContent dividers >
                     {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 4 - 30 character </div>}
