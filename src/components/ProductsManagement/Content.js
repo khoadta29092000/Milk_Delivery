@@ -116,7 +116,8 @@ export default function Content() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [img, setImg] = useState("");
-    const [categoryId, setCategoryId] = useState(state?.name == undefined ? "" : state?.name);
+    const [filterCategoryId, setFilterCategoryId] = useState(state?.name == undefined ? "" : state?.name);
+    const [categoryId, setCategoryId] = useState("");
     const [supplierId, setsupplierId] = useState("");
     const [dataCate, setDataCate] = useState([]);
     const [data, setData] = useState([]);
@@ -186,7 +187,7 @@ export default function Content() {
         featchCategoryList();
         featchProductList();
         setPage(0);
-    }, [search, categoryId]);
+    }, [search, filterCategoryId]);
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
     const [selectedImage, setSelectedImage] = React.useState();
@@ -254,7 +255,7 @@ export default function Content() {
         try {
 
 
-            const requestURL = `http://www.subcriptionmilk.somee.com/api/Products/Getallproduct?search=${search}&filter=${categoryId}`;
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Products/Getallproduct?search=${search}&filter=${filterCategoryId}`;
 
             const response = await fetch(requestURL, {
                 method: `GET`,
@@ -449,9 +450,9 @@ export default function Content() {
                                 <Select
                                     labelId="demo-simple-select-label"
                                     id="demo-simple-select"
-                                    defaultValue={categoryId}
+                                    defaultValue={filterCategoryId}
                                     label="Category"
-                                    onChange={e => setCategoryId(e.target.value)}
+                                    onChange={e => setFilterCategoryId(e.target.value)}
                                 >
                           <MenuItem  value={""}>All</MenuItem>
                                     {dataCate.map((cate, index) => {

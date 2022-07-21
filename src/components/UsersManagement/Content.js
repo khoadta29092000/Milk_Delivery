@@ -197,7 +197,7 @@ export default function Content() {
     featchStationList();
     featchAdminList();
     setPage(0);
-}, [search]);
+  }, [search]);
 
 
   const handleChangePage = (event, newPage) => {
@@ -213,103 +213,103 @@ export default function Content() {
 
 
   const filterListCus = data.filter(data => {
-    if (data?.isAdmin == false ) {
-        return data
+    if (data?.isAdmin == false) {
+      return data
     }
-})
+  })
 
   const rows1 = filterListCus.map((data, index) => {
-    
-      return (createData(data))
+
+    return (createData(data))
 
   })
 
   let Id;
-    if (selectedValue.id != undefined) {
-        Id = (<div className='max-w-5xl my-5 mx-auto'>
-            <TextField className='w-96 my-5'  defaultValue={id} disabled id="outlined-basic" label="Id" variant="outlined" />
-        </div>)
-    } else {
-      Id = (<div className='max-w-5xl my-5 mx-auto'>
-      <TextField className='w-96 my-5' onChange={e => setId(e.target.value)} defaultValue={id}  id="outlined-basic" label="Id" variant="outlined" />
-  </div>)
+  if (selectedValue.id != undefined) {
+    Id = (<div className='max-w-5xl my-5 mx-auto'>
+      <TextField className='w-96 my-5' defaultValue={id} disabled id="outlined-basic" label="Id" variant="outlined" />
+    </div>)
+  } else {
+    Id = (<div className='max-w-5xl my-5 mx-auto'>
+      <TextField className='w-96 my-5' onChange={e => setId(e.target.value)} defaultValue={id} id="outlined-basic" label="Id" variant="outlined" />
+    </div>)
+  }
+  async function featchAdminList() {
+    try {
+
+
+      const requestURL = `http://www.subcriptionmilk.somee.com/api/Accounts?search=${search}`;
+
+      const response = await fetch(requestURL, {
+        method: `GET`,
+        headers: {
+          'Content-Type': 'application/json',
+
+        },
+      });
+      const responseJSON = await response.json();
+
+      const data = responseJSON;
+
+      setData(responseJSON.data)
+
+      console.log("aa fetch", responseJSON.data)
+
+    } catch (error) {
+      console.log('Fail to fetch product list: ', error)
     }
-    async function featchAdminList() {
-      try {
-
-
-          const requestURL = `http://www.subcriptionmilk.somee.com/api/Accounts?search=${search}`;
-
-          const response = await fetch(requestURL, {
-              method: `GET`,
-              headers: {
-                  'Content-Type': 'application/json',
-
-              },
-          });
-          const responseJSON = await response.json();
-
-          const data = responseJSON;
-
-          setData(responseJSON.data)
-
-          console.log("aa fetch", responseJSON.data)
-
-      } catch (error) {
-          console.log('Fail to fetch product list: ', error)
-      }
   }
   async function featchStationList() {
     try {
 
 
-        const requestURL = `http://www.subcriptionmilk.somee.com/api/Stations/Getallstations`;
+      const requestURL = `http://www.subcriptionmilk.somee.com/api/Stations/Getallstations`;
 
-        const response = await fetch(requestURL, {
-            method: `GET`,
-            headers: {
-                'Content-Type': 'application/json',
+      const response = await fetch(requestURL, {
+        method: `GET`,
+        headers: {
+          'Content-Type': 'application/json',
 
-            },
-        });
-        const responseJSON = await response.json();
+        },
+      });
+      const responseJSON = await response.json();
 
-        const data = responseJSON;
+      const data = responseJSON;
 
-        setDataStation(responseJSON.data)
+      setDataStation(responseJSON.data)
 
-        console.log("aa fetch", responseJSON.data)
+      console.log("aa fetch", responseJSON.data)
 
     } catch (error) {
-        console.log('Fail to fetch product list: ', error)
+      console.log('Fail to fetch product list: ', error)
     }
-}
+  }
   console.log("aa fetch", data)
 
 
   const [progresspercent, setProgresspercent] = useState(0);
 
   async function handleUpload() {
-      if (click == false) { setAvartar(selectedImage) }
-      else {
-          const storageRef = ref(storage, `Avartar/${selectedImage.name + v4()}`);
-          const uploadTask = uploadBytesResumable(storageRef, selectedImage);
-          uploadTask.on("state_changed",
-              (snapshot) => {
-                  const progress =
-                      Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                  setProgresspercent(progress);
-              },
-              (error) => {
-                  alert(error);
-              },
-              () => {
-                  getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                    setAvartar(downloadURL)
-                  });
-              }
-          );
-      }
+    if (click == false) { setAvartar(selectedImage) }
+    else {
+      const storageRef = ref(storage, `Avartar/${selectedImage.name + v4()}`);
+      const uploadTask = uploadBytesResumable(storageRef, selectedImage);
+      uploadTask.on("state_changed",
+        (snapshot) => {
+          const progress =
+            Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+          setProgresspercent(progress);
+        },
+        (error) => {
+          alert(error);
+        },
+        () => {
+          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+            setAvartar(downloadURL)
+          });
+        }
+      );
+    }
   }
   const [NumError, setNum] = useState(false)
   const [phoneErrorr, setDesErr] = useState(false)
@@ -317,111 +317,108 @@ export default function Content() {
   const [message, setMess] = useState(false)
 
   const handleCloseAlert = (event, reason) => {
-      if (reason === "clickaway") {
-          return;
-      }
+    if (reason === "clickaway") {
+      return;
+    }
 
-      setAlert(false);
+    setAlert(false);
   };
   const callbackSearch = (childData) => {
-      setSearch(childData)
+    setSearch(childData)
 
   };
 
   return (
     <section className=" ml-0 xl:ml-64  px-5 pt-10  ">
-        <Snackbar open={alert} autoHideDuration={4000} onClose={handleCloseAlert} className="float-left w-screen">
-                    <Alert onClose={handleCloseAlert} severity="success" >
-                        {message}
-                    </Alert>
-                </Snackbar>
+      <Snackbar open={alert} autoHideDuration={4000} onClose={handleCloseAlert} className="float-left w-screen">
+        <Alert onClose={handleCloseAlert} severity="success" >
+          {message}
+        </Alert>
+      </Snackbar>
       <Paper className=' ' sx={{ width: '100%', overflow: 'hidden' }}>
         <TableHead >
           <div className='pt-2 pl-4 block font-semibold text-xl'>
             Customer Management
           </div>
-        </TableHead>  
+        </TableHead>
         <BootstrapDialog
-                    onClose={handleClose}
-                    aria-labelledby="customized-dialog-title"
-                    open={open}
-                >
-                    <BootstrapDialogTitle onClose={handleClose}>
-                        Customer Detail
-                    </BootstrapDialogTitle>
-                    <DialogContent dividers >
-                    {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 4 - 30 character </div>}
-                    {NumError && <div className='text-red-600 ml-11 mb-5 text-xl'>Id not Number</div>}
-                    {phoneErrorr && <div className='text-red-600 ml-11 mb-5 text-xl'>phone must be valid</div>}
-               
-                       {Id}
-                       
-                        <div className='max-w-5xl my-5 mx-auto'>
-                            {selectedImage == undefined ? <div></div> : <img  alt="" className='mx-auto h-48 w-48 my-5' src={click == false ? selectedValue.avatar : window.URL.createObjectURL(selectedImage)} />}
-                        </div>
-                                                                         
-                        <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' onChange={e => setFullname(e.target.value)}  defaultValue={selectedValue.fullname} id="outlined-basic" label="Full Name" variant="outlined" />
-                        </div>
-                        <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' onChange={e => setEmail(e.target.value)} defaultValue={selectedValue.email} autoComplete='off' id="outlined-basic" label="Email" variant="outlined" />
-                        </div>
-                        <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' onChange={e => setPassword(e.target.value)} autoComplete='off' defaultValue={selectedValue.password} id="outlined-basic" label="Password" variant="outlined" type="password" />
-                        </div>
-                        <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' onChange={e => setPhone(e.target.value)} defaultValue={selectedValue.phone} id="outlined-basic" label="Phone" variant="outlined" />
-                        </div>
-                        <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' onChange={e => setAddress(e.target.value)} defaultValue={selectedValue.phone} id="outlined-basic" label="Address" variant="outlined" />
-                        </div>
-                        <div className='max-w-5xl my-5 mx-auto'>
-                        <Box sx={{ minWidth: 120 }}>
-                                <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select-label">Gender</InputLabel>
-                                    <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        defaultValue={gender}
-                                        label="Gender"
-                                        onChange={e => setGender(e.target.value)}
-                                    >
-                                                <MenuItem value={true}>Male</MenuItem>
-                                                <MenuItem value={false}>Female</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Box>
-                        </div>
-                        <div className='max-w-5xl my-5 mx-auto'>
-                        <Box sx={{ minWidth: 120 }}>
-                                <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select-label">Station</InputLabel>
-                                    <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        defaultValue={stationId}
-                                        label="Station"
-                                        onChange={e => setStationId(e.target.value)}
-                                    >
-                                           {dataStation.map((cate, index) => {
-                                            console.log("aaaaa", cate.id)
-                                            return (
-                                              
-                                                <MenuItem key={index} value={cate.id}>{cate.title}</MenuItem>
-                                            )
-                                        })}
-                                    </Select>
-                                </FormControl>
-                            </Box>
-                        </div>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button  onClick={handleClose}>
-                           
-                            Save
-                        </Button>
-                    </DialogActions>
-                </BootstrapDialog>
+          onClose={handleClose}
+          aria-labelledby="customized-dialog-title"
+          open={open}
+        >
+          <BootstrapDialogTitle onClose={handleClose}>
+            Customer Detail
+          </BootstrapDialogTitle>
+          <DialogContent dividers >
+            {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 4 - 30 character </div>}
+            {NumError && <div className='text-red-600 ml-11 mb-5 text-xl'>Id not Number</div>}
+            {phoneErrorr && <div className='text-red-600 ml-11 mb-5 text-xl'>phone must be valid</div>}
+
+            {Id}
+
+            <div className='max-w-5xl my-5 mx-auto'>
+              {selectedImage == undefined ? <div></div> : <img alt="" className='mx-auto h-48 w-48 my-5' src={click == false ? selectedValue.avatar : window.URL.createObjectURL(selectedImage)} />}
+            </div>
+
+            <div className='max-w-5xl my-5 mx-auto'>
+              <TextField className='w-96 my-5' onChange={e => setFullname(e.target.value)} defaultValue={selectedValue.fullname} id="outlined-basic" label="Full Name" variant="outlined" />
+            </div>
+            <div className='max-w-5xl my-5 mx-auto'>
+              <TextField className='w-96 my-5' onChange={e => setEmail(e.target.value)} defaultValue={selectedValue.email} autoComplete='off' id="outlined-basic" label="Email" variant="outlined" />
+            </div>
+            <div className='max-w-5xl my-5 mx-auto'>
+              <TextField className='w-96 my-5' onChange={e => setPassword(e.target.value)} autoComplete='off' defaultValue={selectedValue.password} id="outlined-basic" label="Password" variant="outlined" type="password" />
+            </div>
+            <div className='max-w-5xl my-5 mx-auto'>
+              <TextField className='w-96 my-5' onChange={e => setPhone(e.target.value)} defaultValue={selectedValue.phone} id="outlined-basic" label="Phone" variant="outlined" />
+            </div>
+            <div className='max-w-5xl my-5 mx-auto'>
+              <TextField className='w-96 my-5' onChange={e => setAddress(e.target.value)} defaultValue={selectedValue.phone} id="outlined-basic" label="Address" variant="outlined" />
+            </div>
+            <div className='max-w-5xl my-5 mx-auto'>
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Gender</InputLabel>
+                  <Select
+                    disabled
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    defaultValue={gender}
+                    label="Gender"
+                    onChange={e => setGender(e.target.value)}
+                  >
+                    <MenuItem value={true}>Male</MenuItem>
+                    <MenuItem value={false}>Female</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+            </div>
+            <div className='max-w-5xl my-5 mx-auto'>
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Station</InputLabel>
+                  <Select
+                    disabled
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    defaultValue={stationId}
+                    label="Station"
+                    onChange={e => setStationId(e.target.value)}
+                  >
+                    {dataStation.map((cate, index) => {
+                      console.log("aaaaa", cate.id)
+                      return (
+
+                        <MenuItem key={index} value={cate.id}>{cate.title}</MenuItem>
+                      )
+                    })}
+                  </Select>
+                </FormControl>
+              </Box>
+            </div>
+          </DialogContent>
+
+        </BootstrapDialog>
         <div className='pr-5 my-6 float-right'>
           <Search parentCallback={callbackSearch} />
         </div>

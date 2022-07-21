@@ -16,7 +16,33 @@ import { useHistory } from 'react-router-dom';
 export default function Header(props) {
     const history = useHistory();
     const [openNav, setOpenNav] = useState(false);
+    const [profileList, setProfileList] = useState([]);
+    async function featchProfile() {
+        try {
+
+
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Accounts/getbyid?id=${localStorage.getItem('id-token')}`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setProfileList(responseJSON.data)
+            console.log("aa aaaaaaaaaaaaaaa", profileList)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
     useEffect(() => {
+        featchProfile();
         setOpenNav(props.dataOpenNav);
       }, [openNav]);
     const handleOpenNav = () => {
@@ -72,22 +98,27 @@ export default function Header(props) {
             <div className={' visible xl:invisible absolute   ml-5 pt-3   font-bold text-3xl'}>
                 <MenuIcon onClick={handleOpenNav} />
             </div>
-            <Button1
-                ref={anchorRef}
-                id="composition-button"
-                aria-controls={open ? 'composition-menu' : undefined}
-                aria-expanded={open ? 'true' : undefined}
-                aria-haspopup="true"
-                onClick={handleToggle}
-                color="transparent"
-                className=" text-black float-right  h-16 w-56 z-50 ml-2"
-                ripple="dark"
-            >
-                <Stack direction="row" spacing={2}>
-                    <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-                </Stack>
-                <Typography color="White" className='pl-2'>Anh Khoa</Typography>
-            </Button1>
+            {profileList.map(item => {
+                    return (
+                        <Button1
+                        ref={anchorRef}
+                        id="composition-button"
+                        aria-controls={open ? 'composition-menu' : undefined}
+                        aria-expanded={open ? 'true' : undefined}
+                        aria-haspopup="true"
+                        onClick={handleToggle}
+                        color="transparent"
+                        className=" text-black float-right  h-16 w-56 z-50 ml-2"
+                        ripple="dark"
+                    >
+                        <Stack direction="row" spacing={2}>
+                            <Avatar alt="Cindy Baker" src={item.avatar} />
+                        </Stack>
+                        <Typography color="White" className='pl-2'>{item.fullname}</Typography>
+                    </Button1>
+                        )
+                    })}
+           
             <Popper
                 open={open}
                 anchorEl={anchorRef.current}
@@ -113,7 +144,7 @@ export default function Header(props) {
                                     onKeyDown={handleListKeyDown}
                                 >
                                     <MenuItem >
-                                        <Link to="/profile">
+                                        <Link to="/ProfileDashboard">
                                             Dashboard
                                         </Link>
                                     </MenuItem>
@@ -122,7 +153,7 @@ export default function Header(props) {
                                             Profile
                                         </Link>
                                     </MenuItem>
-                                    <MenuItem onClick={handleClose}>Change Password</MenuItem>
+
                                     <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
                                 </MenuList>
                             </ClickAwayListener>

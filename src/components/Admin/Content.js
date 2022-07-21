@@ -62,12 +62,7 @@ const columns = [
     minWidth: 100,
     align: '',
   },
-  {
-    id: 'Station',
-    label: 'Station',
-    minWidth: 100,
-    align: '',
-  },
+  
   {
     id: 'View',
     label: 'View',
@@ -213,7 +208,7 @@ export default function Content() {
 
 
   const filterListCus = data.filter(data => {
-    if (data?.isAdmin == true) {
+    if (data?.isAdmin == true && localStorage.getItem('id-token') != data.id) {
       return data
     }
   })
@@ -228,11 +223,11 @@ export default function Content() {
   let Id;
   if (selectedValue.id != undefined) {
     Id = (<div className='max-w-5xl my-5 mx-auto'>
-      <TextField className='w-96 my-5' defaultValue={id} disabled id="outlined-basic" label="Id" variant="outlined" />
+      <TextField className='w-96 my-5' defaultValue={selectedValue.id} disabled id="outlined-basic" label="Id" variant="outlined" />
     </div>)
   } else {
     Id = (<div className='max-w-5xl my-5 mx-auto'>
-      <TextField className='w-96 my-5' onChange={e => setId(e.target.value)} defaultValue={id} id="outlined-basic" label="Id" variant="outlined" />
+      <TextField className='w-96 my-5' onChange={e => setId(e.target.value)} defaultValue={selectedValue.id} id="outlined-basic" label="Id" variant="outlined" />
     </div>)
   }
   async function featchAdminList() {
@@ -505,7 +500,7 @@ export default function Content() {
               <TextField className='w-96 my-5' onChange={e => setPhone(e.target.value)} defaultValue={selectedValue.phone} id="outlined-basic" label="Phone" variant="outlined" />
             </div>
             <div className='max-w-5xl my-5 mx-auto'>
-              <TextField className='w-96 my-5' onChange={e => setAddress(e.target.value)} defaultValue={selectedValue.phone} id="outlined-basic" label="Address" variant="outlined" />
+              <TextField className='w-96 my-5' onChange={e => setAddress(e.target.value)} defaultValue={selectedValue.address} id="outlined-basic" label="Address" variant="outlined" />
             </div>
             <div className='max-w-5xl my-5 mx-auto'>
               <Box sx={{ minWidth: 120 }}>

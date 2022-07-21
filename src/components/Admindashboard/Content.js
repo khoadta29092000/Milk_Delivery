@@ -17,7 +17,17 @@ import GroupIcon from '@mui/icons-material/Group';
 
 
 export default function Content() {
+    const [dataDeliveryTrip, setDataDeliveryTrip] = useState([]);
+    const [dataDeliveryMan, setDataDeliveryMan] = useState([]);
+    const [dataPackageorder, setDataPackageorder] = useState([]);
+    const [dataPackage, setDataPackage] = useState([]);
+    const [dataStation, setDataStation] = useState([]);
+    const [dataAcc, setDataAcc] = useState([]);
+    const [dataOrder, setDataOrder] = useState([]);
+    const [dataOrderDetail, setDataOrderDetail] = useState([]);
     const [dataProducts, setDataProduct] = useState([]);
+    const [dataCategory, setDataCategory] = useState([]);
+
     var data = [
         { id: 1, title: "Today", price: "30.000.000", count: "10" },
         { id: 2, title: "This Month", price: "160.000.000", count: "152" },
@@ -35,7 +45,273 @@ export default function Content() {
         { id: 2, title: "Delivery Boi", price: "160.000.000", count: "46" },
     ];
 
+    useEffect(() => {
+        featchDeliveryManList();
+        featchAccList();
+        featchStationList();
+        featchDeliveryTripList();
+        featchOrderList();
+        featchPackageOrderList();
+        featchProductList();
+        featchOrderDetailList();
+        featchPackageList();
+        featchCategoryList();
+    }, []);
+    var today = new Date();
+    var date = (today.getDate().length < 2 ? '0' + today.getDate() : today.getDate()) + ' - '
+        + ((today.getMonth() + 1).length < 2 ? (today.getMonth() + 1) : '0' + (today.getMonth() + 1)) + ' - '
+        + today.getFullYear();
+    var InDay = today.getFullYear() + '-' +
+        ((today.getMonth() + 1).length < 2 ? (today.getMonth() + 1) : '0' + (today.getMonth() + 1))
+        + '-' + (today.getDate().length < 2 ? '0' + today.getDate() : today.getDate());
+    async function featchCategoryList() {
+        try {
 
+
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Categories/Getallcategories?search=`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataCategory(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+    async function featchDeliveryManList() {
+        try {
+
+
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/DeliveryMen`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataDeliveryMan(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+    async function featchAccList() {
+        try {
+
+
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Accounts`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataAcc(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+    async function featchStationList() {
+        try {
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Stations/Getallstations`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataStation(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+
+    async function featchDeliveryTripList() {
+        try {
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/DeliveryTrips/Getalldeliverytrip`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataDeliveryTrip(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+
+    async function featchOrderList() {
+        try {
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Orders/Getallorder?search=${InDay}`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataOrder(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+
+    async function featchPackageOrderList() {
+        try {
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/PackageOrders/Getallpackageorder`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataPackageorder(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+
+    async function featchPackageList() {
+        try {
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Packages/Getallpackages`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataPackage(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+
+    async function featchOrderDetailList() {
+        try {
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/OrderDetails`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataOrderDetail(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+    const filterListCus = dataAcc.filter(data => {
+        if (data?.isAdmin == false) {
+            return data
+        }
+    })
+
+
+    async function featchProductList() {
+        try {
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Products/Getallproduct`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataProduct(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
     useEffect(() => {
         //featchProductList();
 
@@ -52,85 +328,113 @@ export default function Content() {
         <section className=" ml-0 xl:ml-64 mb-0 pt-10  ">
             <div className="mt-16 ml-8 ">
                 <h2 className="font-bold text-2xl mb-2 "> Orders</h2>
-                <div className='grid mr-5 grid-cols-1 lg:grid-cols-3 sm:grid-cols-2 2xl:grid-cols-4 gap-4'>
-                    {data.map((product, index) => {
-                        return (
-                            <Card key={product.id} className="" >
-                                <button className="text-white bg-blue-600 rounded-lg mt-5 ml-5  h-12 w-12">
-                                    <CalendarMonthIcon />
-                                </button>
 
-                                <CardContent className="mt-0">
-                                    <Typography gutterBottom variant="h8" className='font-bold text-sm' component="div">
-                                        {product?.title}
-                                    </Typography>
-                                    <Typography gutterBottom variant="h16" className=' font-semibold text-xl' component="div">
-                                        {product.count}
-                                    </Typography>
-                                </CardContent>
-                                <CardActions>
-                                    <Typography gutterBottom variant="h10" className='text-green-700 ml-2 font-semibold' component="div">
-                                        {product?.price}<a className='underline'>đ</a>
-                                    </Typography>
-                                </CardActions>
-                            </Card>
-                        )
-                    })}
+                <div className='grid mr-5 grid-cols-1  sm:grid-cols-2  gap-4'>
+                    <Card className="" >
+                        <Link to="/OrderInDay">
+                            <button className="text-white bg-blue-600 rounded-lg mt-5 ml-5  h-12 w-12">
+                                <CalendarMonthIcon />
+                            </button>
+                        </Link>
+
+
+                        <CardContent className="mt-0">
+                            <Typography gutterBottom variant="h8" className='font-bold text-sm' component="div">
+                                Order In Day
+                            </Typography>
+                            <Typography gutterBottom variant="h16" className=' font-semibold text-xl' component="div">
+                                {dataOrder.length}
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                    <Card className="" >
+                        <Link to="/PackageOrderManagement">
+                            <button className="text-white bg-blue-600 rounded-lg mt-5 ml-5  h-12 w-12">
+                                <CalendarMonthIcon />
+                            </button>
+                        </Link>
+
+
+                        <CardContent className="mt-0">
+                            <Typography gutterBottom variant="h8" className='font-bold text-sm' component="div">
+                                All Order
+                            </Typography>
+                            <Typography gutterBottom variant="h16" className=' font-semibold text-xl' component="div">
+                                {dataPackageorder.length}
+                            </Typography>
+                        </CardContent>
+
+                    </Card>
+
                 </div>
+
             </div>
             <div className="mt-5 ml-8 ">
                 <h2 className="font-bold text-2xl mb-2 "> Product</h2>
                 <div className='grid mr-5 grid-cols-1 lg:grid-cols-3 sm:grid-cols-2 2xl:grid-cols-4 gap-4'>
 
                     <Card className="" >
-                        <button className="text-white bg-blue-600 rounded-lg mt-5 ml-5  h-12 w-12">
-                            <CategoryIcon />
-                        </button>
+                        <Link to="/CategoriesManagement">
+                            <button className="text-white bg-blue-600 rounded-lg mt-5 ml-5  h-12 w-12">
+                                <CategoryIcon />
+                            </button>
+                        </Link>
+
                         <CardContent className="mt-0">
                             <Typography gutterBottom variant="h8" className='font-bold text-sm' component="div">
                                 Category
                             </Typography>
                             <Typography gutterBottom variant="h16" className=' font-semibold text-xl' component="div">
-                                5
+                                {dataCategory.length}
                             </Typography>
                         </CardContent>
                     </Card>
                     <Card className="" >
-                        <button className="text-white bg-blue-600 rounded-lg mt-5 ml-5  h-12 w-12">
-                            <ShoppingCartIcon />
-                        </button>
+                        <Link to="/ProductsManagement">
+
+                            <button className="text-white bg-blue-600 rounded-lg mt-5 ml-5  h-12 w-12">
+                                <ShoppingCartIcon />
+                            </button>
+                        </Link>
+
                         <CardContent className="mt-0">
                             <Typography gutterBottom variant="h8" className='font-bold text-sm' component="div">
                                 Products
                             </Typography>
                             <Typography gutterBottom variant="h16" className=' font-semibold text-xl' component="div">
-                                12
+                                {dataProducts.length}
                             </Typography>
                         </CardContent>
                     </Card>
                     <Card className="" >
-                        <button className="text-white bg-blue-600 rounded-lg mt-5 ml-5  h-12 w-12">
-                            <AllInboxIcon />
-                        </button>
+                        <Link to="/PackageManagement">
+                            <button className="text-white bg-blue-600 rounded-lg mt-5 ml-5  h-12 w-12">
+                                <AllInboxIcon />
+                            </button>
+                        </Link>
+
                         <CardContent className="mt-0">
                             <Typography gutterBottom variant="h8" className='font-bold text-sm' component="div">
                                 Packages
                             </Typography>
                             <Typography gutterBottom variant="h16" className=' font-semibold text-xl' component="div">
-                                8
+                                {dataPackage.length}
                             </Typography>
                         </CardContent>
                     </Card>
                     <Card className="" >
-                        <button className="text-white bg-blue-600 rounded-lg mt-5 ml-5  h-12 w-12">
-                            <LocationOnIcon />
-                        </button>
+                        <Link to="/AreasManagement">
+                            <button className="text-white bg-blue-600 rounded-lg mt-5 ml-5  h-12 w-12">
+                                <LocationOnIcon />
+                            </button>
+                        </Link>
+
                         <CardContent className="mt-0">
                             <Typography gutterBottom variant="h8" className='font-bold text-sm' component="div">
                                 Areas
                             </Typography>
                             <Typography gutterBottom variant="h16" className=' font-semibold text-xl' component="div">
-                                32
+                                {dataStation.length}
                             </Typography>
                         </CardContent>
                     </Card>
@@ -140,31 +444,37 @@ export default function Content() {
             <div className="mt-5 ml-8 ">
                 <h2 className="font-bold text-2xl mb-2 "> Member</h2>
                 <div className='grid mr-5 grid-cols-1  sm:grid-cols-2  gap-4'>
-                    <Card  className="" >
-                        <button className="text-white bg-blue-600 rounded-lg mt-5 ml-5  h-12 w-12">
-                            <GroupIcon />
-                        </button>
+                    <Card className="" >
+                        <Link to="/UsersManagement">
+                            <button className="text-white bg-blue-600 rounded-lg mt-5 ml-5  h-12 w-12">
+                                <GroupIcon />
+                            </button>
+
+                        </Link>
 
                         <CardContent className="mt-0">
                             <Typography gutterBottom variant="h8" className='font-bold text-sm' component="div">
                                 Users
                             </Typography>
                             <Typography gutterBottom variant="h16" className=' font-semibold text-xl' component="div">
-                                1512
+                                {filterListCus.length}
                             </Typography>
                         </CardContent>
                     </Card>
-                    <Card  className="" >
-                        <button className="text-white bg-blue-600 rounded-lg mt-5 ml-5  h-12 w-12">
-                            <ManIcon />
-                        </button>
+                    <Card className="" >
+                        <Link to="/DeliveryBoyManagement">
+                            <button className="text-white bg-blue-600 rounded-lg mt-5 ml-5  h-12 w-12">
+                                <ManIcon />
+                            </button>
+                        </Link>
+
 
                         <CardContent className="mt-0">
                             <Typography gutterBottom variant="h8" className='font-bold text-sm' component="div">
                                 Delivery Man
                             </Typography>
                             <Typography gutterBottom variant="h16" className=' font-semibold text-xl' component="div">
-                                62
+                                {dataDeliveryMan.length}
                             </Typography>
                         </CardContent>
 

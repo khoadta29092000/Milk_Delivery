@@ -126,7 +126,7 @@ export default function Content() {
    
     };
     const validName = new RegExp(/^.{6,30}$/);
-    const validDes = new RegExp(/^.{6,300}$/);
+    const validDes = new RegExp(/^.{6,3000}$/);
     const validNum = new RegExp("^[0-9]*$");
 
     const body = {
@@ -138,7 +138,7 @@ export default function Content() {
     };
     function createData(data) {
         let Title = data.title;
-        let Price = data.price.toFixed(3).replace(/\d(?=(\d{3})+\.)/g, "$&.") ;
+        let Price = data.price.toFixed(3).replace(/\d(?=(\d{3})+\.)/g, "$&.") + "đ" ;
 
         let Image = (
             <img
@@ -243,16 +243,17 @@ export default function Content() {
             );
         }
     }
+    console.log("img nenaenan", img)
     const [NumError, setNum] = useState(false)
     const [phoneErrorr, setDesErr] = useState(false)
     const [nameError, setNameError] = useState(false)
     const [message, setMess] = useState(false)
     async function handleUpdateOrCreate() {
-        if (!validName.test(title) || !validName.test(img)) {
+        if (!validName.test(title) ) {
             setNameError(true)
             setDesErr(false)
             setNum(false)
-        } else if (!validDes.test(description)) {
+        } else if (!validDes.test(description) || !validDes.test(img)) {
             setNameError(false)
             setDesErr(true)
             setNum(false)

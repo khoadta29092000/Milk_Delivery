@@ -1,6 +1,6 @@
 
 import Header from 'components/DefaultHeaderDashboard';
-import Content from 'components/PackageOrderManagement/Content';
+import Content from 'components/PackageDetails/Content';
 import DefaultNavbarAdmin from 'components/DefaultNavbarAdmin';
 import { React, useState, } from 'react';
 import Modal from '@mui/material/Modal';
@@ -13,8 +13,7 @@ function handleClick(event) {
     console.info('You clicked a breadcrumb.');
   }
 
-
-export default function PackageOrderManagement() {
+export default function PackageDetails() {
     const [openNav, setOpenNav] = useState(false);
     const handleClose = () => setOpenNav(false);
 
@@ -46,18 +45,21 @@ export default function PackageOrderManagement() {
                 </div>
                 <main className="ml-0 mb-0 bg-gray-100  w-screen overflow-y-auto h-screen ">
                     <div className='absolute   z-10'>
-                        <Header parentCallback={callbackFunction} className="" />
+                    <Header parentCallback={callbackFunction} className="" />
                     </div>
                     <div className='  ml-0 xl:ml-64  mt-28 text-white ' role="presentation" onClick={handleClick}>
                         <Breadcrumbs className='pl-5' aria-label="breadcrumb">
                             <Link underline="hover" className='hover:underline' to="/" color="inherit" >
                                 Home
                             </Link>
-                            <Typography color="text.primary">Package Order</Typography>
+                            <Link underline="hover" className='hover:underline' to="/PackageOrderManagement" color="inherit" >
+                            Package Order
+                            </Link>
+                            <Typography color="text.primary">PackageDetails</Typography>
                         </Breadcrumbs>
                     </div>
                     <div className='mb-12'>
-                        <Content />
+                    <Content /> 
                     </div>
                     <DefaultFooterDashboard
               />

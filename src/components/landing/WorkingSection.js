@@ -21,16 +21,34 @@ export default function WorkingSection() {
         { id: 7, title: "Fresh milk", price: "100.000", decription: "Fresh milk from the farm has a shelf life of 2 or 3 days", category: "Milk", image1: "https://www.farmlyfresh.com/wp-content/uploads/2020/05/milk-buy-trail.png", image2: "https://www.farmlyfresh.com/wp-content/uploads/2020/04/milk-grid-h.jpg" },
         { id: 8, title: "Fresh milk", price: "200.000", decription: "Fresh milk from the farm has a shelf life of 2 or 3 days", category: "Milk", image1: "https://www.farmlyfresh.com/wp-content/uploads/2020/05/milk-buy-trail.png", image2: "https://www.farmlyfresh.com/wp-content/uploads/2020/04/milk-grid-h.jpg" },];
     useEffect(() => {
-        featchProductList();
+        featchPakageList();
     }, []);
-    async function featchProductList() {
+    async function featchPakageList() {
         try {
-            setDataProduct(data);
-            return data
+
+
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Packages/Getallpackages?search=`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setDataProduct(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
         } catch (error) {
             console.log('Fail to fetch product list: ', error)
         }
     }
+
 
 
     return (
@@ -67,12 +85,12 @@ export default function WorkingSection() {
                                     <div className="relative w-72 h-56 text-white overflow-hidden cursor-pointer transition-all duration-700 card">
                                         <CardMedia
                                             component="img"
-                                            image={product?.image1}
-                                            className="absolute inset-0  flex justify-center items-center bg-white transition-all duration-500 delay-200 z-20 hover:opacity-0"
+                                            image={product?.img}
+                                            className="absolute inset-0 h-72   flex justify-center items-center bg-white transition-all duration-500 delay-200 z-20 hover:opacity-0"
                                         />
                                         <CardMedia
                                             component="img"
-                                            image={product?.image2}
+                                            image="https://www.farmlyfresh.com/wp-content/uploads/2020/04/milk-grid-h.jpg"
                                             className="absolute inset-0  flex justify-center items-center bg-black transition-all hover:scale-125 z-10 card-back"
                                         />
                                     </div>
@@ -82,7 +100,7 @@ export default function WorkingSection() {
                                             {product?.title}
                                         </Typography>
                                         <Typography gutterBottom variant="h10" className='text-green-700 font-semibold' component="div">
-                                            {product?.price}<a className='underline'>đ</a>
+                                            {product?.price.toFixed(3).replace(/\d(?=(\d{3})+\.)/g, "$&.")}<a className='underline'>đ</a>
                                         </Typography>
                                     </CardContent>
                                     <CardActions>

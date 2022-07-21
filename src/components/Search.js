@@ -54,7 +54,7 @@ function Search(props) {
                     >
                         <InputBase
                             sx={{ ml: 1, flex: 1 }}
-                            placeholder="Search Product"
+                            placeholder="Search"
                             alue={searchTerm}
                             onChange={handleSearchTermChange}
                         />

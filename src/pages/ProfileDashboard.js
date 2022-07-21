@@ -1,13 +1,21 @@
+import Button from '@material-tailwind/react/Button';
+import Image from '@material-tailwind/react/Image';
+import H3 from '@material-tailwind/react/Heading3';
+import Icon from '@material-tailwind/react/Icon';
+import LeadText from '@material-tailwind/react/LeadText';
+import ProfilePicture from 'assets/img/team-2-800x800.jpg';
 import DefaultNavbar from 'components/DefaultNavbar';
 import DefaultFooter from 'components/DefaultFooter';
 import Header from 'components/profile/Header';
-import Content from 'components/profile/Content';
+
+import DefaultNavbarAdmin from 'components/DefaultNavbarAdmin';
+import Content from 'components/ProfileDashboard/Content';
 import DefaultNavbarProfile from 'components/DefaultNavbarProfile';
 
-export default function Profile() {
+export default function ProfileDashboard() {
     return (
         <>
-              <div className="absolute w-full z-20">
+            <div className="absolute w-full z-20">
                 <DefaultNavbar />
             </div>
             <main>
@@ -31,7 +39,7 @@ export default function Profile() {
                 </section>
             </main>
             <DefaultFooter />
-       
         </>
+
     );
 }

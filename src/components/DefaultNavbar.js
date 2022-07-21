@@ -33,7 +33,38 @@ import logo from "../assets/img/logo.png"
 
 export default function DefaultNavbar() {
     const [open, setOpen] = useState(false);
+    const [name, setName] = useState("");
+    const [avatar, setAvatar] = useState("");
+    const [profileList, setProfileList] = useState([]);
     const anchorRef = useRef(null);
+    useEffect(() => {
+        featchProfile();
+
+    }, []);
+    async function featchProfile() {
+        try {
+
+
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Accounts/getbyid?id=${localStorage.getItem('id-token')}`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setProfileList(responseJSON.data)
+            console.log("aa aaaaaaaaaaaaaaa", profileList)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
 
     const handleToggle = () => {
         setOpen((prevOpen) => !prevOpen);
@@ -72,26 +103,31 @@ export default function DefaultNavbar() {
     let adminDashboard;
     let buttonSignIn;
     let buttonSingUp;
-    let avatar;
+    let img;
     if (localStorage.getItem(`user-token`)) {
-        avatar = (
+        img = (
             <div>
-                <Button1
-                    ref={anchorRef}
-                    id="composition-button"
-                    aria-controls={open ? 'composition-menu' : undefined}
-                    aria-expanded={open ? 'true' : undefined}
-                    aria-haspopup="true"
-                    onClick={handleToggle}
-                    color="transparent"
-                    className=" text-white ml-2"
-                    ripple="dark"
-                >
-                    <Stack direction="row" spacing={2}>
-                        <Avatar alt="Cindy Baker" src="/static/images/avatar/3.jpg" />
-                    </Stack>
-                    <Typography color="White" className='pl-2'>Anh Khoa</Typography>
-                </Button1>
+                {profileList.map(item => {
+                    return (
+                        <Button1
+                            ref={anchorRef}
+                            id="composition-button"
+                            aria-controls={open ? 'composition-menu' : undefined}
+                            aria-expanded={open ? 'true' : undefined}
+                            aria-haspopup="true"
+                            onClick={handleToggle}
+                            color="transparent"
+                            className=" text-white ml-2"
+                            ripple="dark"
+                        >
+                            <Stack direction="row" spacing={2}>
+                                <Avatar alt="Cindy Baker" src={item.avatar} />
+                            </Stack>
+                            <Typography color="White" className='pl-2'>{item.fullname}</Typography>
+                        </Button1>
+                    )
+                })}
+
                 <Popper
                     open={open}
                     anchorEl={anchorRef.current}
@@ -107,6 +143,7 @@ export default function DefaultNavbar() {
                                 transformOrigin:
                                     placement === 'bottom-start' ? 'left top' : 'left bottom',
                             }}
+
                         >
                             <Paper>
                                 <ClickAwayListener onClickAway={handleClose}>
@@ -117,18 +154,17 @@ export default function DefaultNavbar() {
                                         onKeyDown={handleListKeyDown}
                                     >
                                         <MenuItem >
-                                        <Link to="/profile">
-                                        Dashboard
-                                        </Link>
+                                            <Link to="/profiledashboard">
+                                                Dashboard
+                                            </Link>
                                         </MenuItem>
                                         <MenuItem >
-                                        <Link to="/profile">
-                                        Profile
-                                        </Link>
+                                            <Link to="/profile">
+                                                Profile
+                                            </Link>
                                         </MenuItem>
-                                        <MenuItem onClick={handleClose}>Change Password</MenuItem>
-                                        <MenuItem onClick={handleClose}>My Address</MenuItem>
-                                        <MenuItem onClick={handleClose}>Subscription</MenuItem>
+                                       
+                                       
                                         <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
                                     </MenuList>
                                 </ClickAwayListener>
@@ -147,7 +183,7 @@ export default function DefaultNavbar() {
                 rel="noreferrer"
             >
                 <Button1
-                    color="transparent"
+                    color="lightBlue"
                     className=" text-white ml-2"
                     ripple="dark"
                 >
@@ -188,7 +224,7 @@ export default function DefaultNavbar() {
     }
 
     return (
-        <Navbar color="transparent"  navbar>
+        <Navbar color="transparent" navbar>
             <NavbarContainer>
                 <NavbarWrapper>
 
@@ -320,8 +356,8 @@ export default function DefaultNavbar() {
                                 </Paper>
                             </Dropdown>
                             {buttonSignIn}
-                            {buttonSingUp}
-                            {avatar}
+
+                            {img}
 
 
                         </div>

@@ -12,8 +12,10 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import { useEffect, useState } from "react";
-
+import { Link } from 'react-router-dom';
+import Search from 'components/Search';
 const columns = [
+    { id: 'PackageOrder', label: "Package Order", minWidth: 150 },
     { id: 'UserName', label: "User Name", minWidth: 150 },
     {
         id: 'PackageName',
@@ -44,15 +46,9 @@ export default function Content() {
     const [dataPackage, setDataPackage] = useState([]);
     const [search, setSearch] = useState("");
     function createData(data) {
-        let UserName;
-        
-                dataAcc.map(name => {
-                    if (name.id == data.customerId) {
-                        return UserName = name.fullname
-                    }
-                })
-           
-        let PackageName;
+        let UserName= data.fullName;
+        let PackageOrder= data.id;
+     let PackageName;
         
                 dataPackage.map(itemPack => {
                     if (itemPack.id == data.packageId) {
@@ -63,9 +59,15 @@ export default function Content() {
         let StartDay = data.startTime.slice(8,10) + "/" +data.startTime.slice(5,7) + "/" + data.startTime.slice(0,4);
         let EndDay = data.endTime.slice(8,10) + "/" +data.endTime.slice(5,7) + "/" + data.endTime.slice(0,4);
         let View = (<button className="text-white  outline-none bg-blue-600 rounded-lg   h-8 w-8">
-        <RemoveRedEyeIcon />
+       
+        <Link to={{
+                            pathname: "/PackageOrderManagement/Details",
+                            state: {
+                                name: data.id
+                            }
+                        }}> <RemoveRedEyeIcon /></Link>
       </button>);
-        return { UserName, PackageName, StartDay, EndDay, View };
+        return { PackageOrder, UserName, PackageName, StartDay, EndDay, View };
     }
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
@@ -163,6 +165,10 @@ export default function Content() {
 
     const rows = [
     ];
+    const callbackSearch = (childData) => {
+        setSearch(childData)
+
+    };
 
     return (
         <section className=" ml-0 xl:ml-64  px-5 pt-10  ">
@@ -173,21 +179,7 @@ export default function Content() {
                     </div>
                 </TableHead>
                 <div className='pr-5 my-6 float-right'>
-                    <Paper
-                        component="form"
-
-                        sx={{ p: '2px 4px', display: 'flex', alignItems: 'center', width: 300 }}
-                    >
-                        <InputBase
-                            sx={{ ml: 1, flex: 1 }}
-                            placeholder="Search Package Order"
-                            inputProps={{ 'aria-label': 'Search Product' }}
-                        />
-                        <IconButton className='' sx={{ p: '10px', outline: "none" }} >
-                            <SearchIcon />
-                        </IconButton>
-
-                    </Paper>
+                <Search parentCallback={callbackSearch} />
                 </div>
                 <TableContainer sx={{}}>
                     <Table stickyHeader aria-label="sticky table">

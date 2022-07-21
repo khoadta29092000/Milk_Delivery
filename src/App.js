@@ -28,6 +28,8 @@ import 'assets/styles/tailwind.css';
 import Admin from 'pages/Admin';
 import OrderInDay from 'pages/OrderInDay';
 import DeliveryBoyDetail from 'pages/DeliveryBoyDetail';
+import ProfileDashboard from 'pages/ProfileDashboard';
+import PackageDetails from 'pages/PackageDetails';
 
 
 
@@ -39,6 +41,7 @@ function App() {
             <Route exact path="/AboutUs" component={Aboutus} />
             <Route exact path="/ServiceAreas" component={ServiceAreas} />
             <Route exact path="/profile" component={Profile} />
+            <Route exact path="/ProfileDashboard" component={ProfileDashboard} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/register" component={Register} />
             <Route exact path="/ContractUs" component={ContractUs} />
@@ -51,6 +54,7 @@ function App() {
             <Route exact path="/PackageManagement" component={PackageManagement} />
             <Route exact path="/OrderInDay" component={OrderInDay} />
             <Route exact path="/PackageOrderManagement" component={PackageOrderManagement} />
+            <Route exact path="/PackageOrderManagement/Details" component={PackageDetails} />
             <Route exact path="/DeliveryBoyManagement" component={DeliveryBoyManagement} />
             <Route exact path="/DeliveryBoyDetail" component={DeliveryBoyDetail} />
             <Route exact path="/AreasManagement" component={AreasManagement} />

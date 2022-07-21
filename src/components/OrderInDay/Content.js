@@ -46,6 +46,7 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
 
 
 const columns = [
+    { id: 'OrderId', label: "OrderId", minWidth: 150 },
     { id: 'PackageName', label: "Package Name", minWidth: 150 },
     { id: 'UserName', label: "User Name", minWidth: 150 },
     { id: 'DeliveryBoy', label: "DeliveryBoy", minWidth: 150 },
@@ -150,6 +151,8 @@ export default function Content() {
         setSlotId(event.target.value);
     };
     function createData(data) {
+        let OrderId= data.id;
+
         let PackageName;
         dataPackageorder.map(item => {
             if (data.pacakeOrderId == item.id) {
@@ -202,7 +205,7 @@ export default function Content() {
         </button>);
 
 
-        return { PackageName, UserName, DeliveryBoy, Area, Slot, Status, View };
+        return { OrderId, PackageName, UserName, DeliveryBoy, Area, Slot, Status, View };
     }
     let Id;
     if (selectedValue.id != undefined) {
@@ -401,7 +404,7 @@ export default function Content() {
 
     async function featchPackageList() {
         try {
-            const requestURL = `http://www.subcriptionmilk.somee.com/api/Packages/Getallpackages`;
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Packages/Getallpackages?search=`;
 
             const response = await fetch(requestURL, {
                 method: `GET`,
@@ -483,6 +486,7 @@ export default function Content() {
         setSearch(childData)
 
     };
+
 
     return (
         <section className=" ml-0 xl:ml-64  px-5 pt-10  ">
