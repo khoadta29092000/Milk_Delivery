@@ -900,9 +900,6 @@ video {
 .grid-cols-6{
 	grid-template-columns: repeat(6, minmax(0, 1fr));
 }
-.grid-cols-4{
-	grid-template-columns: repeat(4, minmax(0, 1fr));
-}
 .flex-col{
 	flex-direction: column;
 }
@@ -3128,9 +3125,6 @@ video {
 	}
 	.\32xl\:grid-cols-4{
 		grid-template-columns: repeat(4, minmax(0, 1fr));
-	}
-	.\32xl\:grid-cols-6{
-		grid-template-columns: repeat(6, minmax(0, 1fr));
 	}
 	.\32xl\:text-center{
 		text-align: center;

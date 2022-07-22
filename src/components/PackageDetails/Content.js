@@ -323,7 +323,7 @@ export default function Content() {
                     })}
 
 
-                    <Card className="h-52  px-4  pl-5" >
+                    <Card className="  px-4  pl-5" >
                         <Typography gutterBottom variant="h4" component="div">
                             Product In Order {typeof Product == "number" ? Product : Product.orderId} :
                         </Typography>
