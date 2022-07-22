@@ -47,7 +47,7 @@ export default function DefaultNavbarProfile() {
     return (
 
         <aside className='  w-64 rounded-none' aria-label="Sidebar">
-            <div className="overflow-y-auto rounded-none  px-3  text-white  h-screen  dark:bg-gray-800">
+            <div className="overflow-y-auto rounded-none  px-3  text-white  h-screen ">
                 <div className='text-white ml-16 h-16 tracking-widest pt-3  text font-bold text-3xl'>
 
 

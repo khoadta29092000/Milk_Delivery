@@ -144,7 +144,7 @@ export default function Content() {
   const validNum = new RegExp("^[0-9]*$");
 
   const body = {
-    id: id,
+   
     email: email,
     password: password,
     fullname: fullname,
@@ -212,7 +212,11 @@ export default function Content() {
       return data
     }
   })
-
+  function EmailExists(email) {
+    return data.some(function (el) {
+        return el.email.toLowerCase() == email.toLowerCase();
+    });
+}
   const rows1 = filterListCus.map((data, index) => {
 
     return (createData(data))
@@ -226,9 +230,7 @@ export default function Content() {
       <TextField className='w-96 my-5' defaultValue={selectedValue.id} disabled id="outlined-basic" label="Id" variant="outlined" />
     </div>)
   } else {
-    Id = (<div className='max-w-5xl my-5 mx-auto'>
-      <TextField className='w-96 my-5' onChange={e => setId(e.target.value)} defaultValue={selectedValue.id} id="outlined-basic" label="Id" variant="outlined" />
-    </div>)
+   
   }
   async function featchAdminList() {
     try {
@@ -307,6 +309,7 @@ export default function Content() {
       );
     }
   }
+  const [emailExits, setEmailExists] = useState(false)
   const [NumError, setNum] = useState(false)
   const [phoneErrorr, setDesErr] = useState(false)
   const [nameError, setNameError] = useState(false)
@@ -316,16 +319,26 @@ export default function Content() {
       setNameError(true)
       setDesErr(false)
       setNum(false)
+      setEmailExists(false)
     } else if (!validPhone.test(phone)) {
       setNameError(false)
       setDesErr(true)
       setNum(false)
-    } else if (!validNum.test(id)) {
+      setEmailExists(false)
+    } else if (!validNum.test(id) && selectedValue.id != undefined) {
       setNameError(false)
       setDesErr(false)
       setNum(true)
-    }
+      setEmailExists(false)
+    }else if (EmailExists(email) == true && selectedValue.id == undefined) {
+      setNameError(false)
+      setDesErr(false)
+      setNum(false)
+      setEmailExists(true)
+   
+  }
     else {
+      setEmailExists(false)
       setNum(false)
       setNameError(false)
       setDesErr(false)
@@ -336,7 +349,7 @@ export default function Content() {
             'Content-Type': 'application/json',
 
           },
-          body: JSON.stringify(body)
+          body: JSON.stringify(bodyCreate)
         }).then(res => res.json())
           .then(result => {
 
@@ -361,7 +374,7 @@ export default function Content() {
         return body
 
       } else {
-        const res = await fetch(`http://www.subcriptionmilk.somee.com/api/Accounts`, {
+        const res = await fetch(`http://www.subcriptionmilk.somee.com/api/Accounts/create`, {
           method: `POST`,
           headers: {
             'Content-Type': 'application/json',
@@ -456,7 +469,7 @@ export default function Content() {
             {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 4 - 30 character </div>}
             {NumError && <div className='text-red-600 ml-11 mb-5 text-xl'>Id not Number</div>}
             {phoneErrorr && <div className='text-red-600 ml-11 mb-5 text-xl'>phone must be valid</div>}
-
+            {emailExits && <div className='text-red-600 ml-11 mb-5 text-xl'>Email exists </div>}
             {Id}
             <div className='max-w-5xl my-5 mx-auto'>
               <Button

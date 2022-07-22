@@ -109,7 +109,7 @@ BootstrapDialogTitle.propTypes = {
 
 export default function Content() {
     const { state } = useLocation()
-   
+
     const [open, setOpen] = React.useState(false);
     const [selectedValue, setSelectedValue] = React.useState([]);
     const [id, setId] = useState("");
@@ -183,7 +183,7 @@ export default function Content() {
         return { Image, Title, Category, Supplier, Edit, Delete };
     }
     useEffect(() => {
-  
+
         featchCategoryList();
         featchProductList();
         setPage(0);
@@ -210,7 +210,16 @@ export default function Content() {
         { id: 4, Title: "Yakun" },
 
     ]
-
+    function TitleExists(title) {
+        return data.some(function (el) {
+            return el.title.toLowerCase() == title.toLowerCase();
+        });
+    }
+    function IdExists(id) {
+        return data.some(function (el) {
+            return el.id == id;
+        });
+    }
     const rows1 = data.map((data, index) => {
         return (createData(data))
     })
@@ -304,20 +313,38 @@ export default function Content() {
             );
         }
     }
-    const [phoneErrorr, setDesErr] = useState(false)
+    const [phoneErrorr, setPhoneErrorr] = useState(false)
     const [nameError, setNameError] = useState(false)
     const [message, setMess] = useState(false)
+    const [nameExists, setNameExists] = useState(false)
+    const [idExists, setIdExists] = useState(false)
     async function handleUpdateOrCreate() {
         if (!validName.test(title)) {
             setNameError(true)
-            setDesErr(false)
+            setPhoneErrorr(false)
+            setNameExists(false)
+            setIdExists(false)
         } else if (!validDes.test(description)) {
             setNameError(false)
-            setDesErr(true)
-        } else {
-
+            setPhoneErrorr(true)
+            setNameExists(false)
+            setIdExists(false)
+        } else if (TitleExists(title) == true && selectedValue.id == undefined) {
             setNameError(false)
-            setDesErr(false)
+            setPhoneErrorr(false)
+            setNameExists(true)
+            setIdExists(false)
+        } else if (IdExists(id) == true && selectedValue.id == undefined) {
+            setNameError(false)
+            setPhoneErrorr(false)
+            setNameExists(false)
+            setIdExists(true)
+        }
+        else {
+            setNameExists(false)
+            setIdExists(false)
+            setNameError(false)
+            setPhoneErrorr(false)
             if (selectedValue.id != undefined) {
                 const res = await fetch(`http://www.subcriptionmilk.somee.com/api/Products/update`, {
                     method: `PUT`,
@@ -454,7 +481,7 @@ export default function Content() {
                                     label="Category"
                                     onChange={e => setFilterCategoryId(e.target.value)}
                                 >
-                          <MenuItem  value={""}>All</MenuItem>
+                                    <MenuItem value={""}>All</MenuItem>
                                     {dataCate.map((cate, index) => {
                                         return (
                                             <MenuItem key={index} value={cate.id}>{cate.title}</MenuItem>
@@ -480,6 +507,9 @@ export default function Content() {
                         {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 6 - 30 character </div>}
 
                         {phoneErrorr && <div className='text-red-600 ml-11 mb-5 text-xl'>Description 6 - 300 character</div>}
+                        {nameExists && <div className='text-red-600 ml-11 mb-5 text-xl'>Title Exists </div>}
+
+                        {idExists && <div className='text-red-600 ml-11 mb-5 text-xl'>Id Exitsts</div>}
                         {Id}
                         <div className='max-w-5xl my-5 mx-auto'>
                             <Button

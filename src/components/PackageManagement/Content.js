@@ -174,6 +174,17 @@ export default function Content() {
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
+
+    function TitleExists(title) {
+        return data.some(function (el) {
+            return el.title.toLowerCase() == title.toLowerCase();
+        });
+    }
+    function IdExists(id) {
+        return data.some(function (el) {
+            return el.id == id;
+        });
+    }
     const rows1 = data.map((data, index) => {
         return (createData(data))
     })
@@ -248,21 +259,43 @@ export default function Content() {
     const [phoneErrorr, setDesErr] = useState(false)
     const [nameError, setNameError] = useState(false)
     const [message, setMess] = useState(false)
+    const [nameExists, setNameExists] = useState(false)
+    const [idExists, setIdExists] = useState(false)
     async function handleUpdateOrCreate() {
         if (!validName.test(title) ) {
             setNameError(true)
             setDesErr(false)
             setNum(false)
+            setNameExists(false)
+            setIdExists(false)
         } else if (!validDes.test(description) || !validDes.test(img)) {
             setNameError(false)
             setDesErr(true)
             setNum(false)
+            setNameExists(false)
+            setIdExists(false)
         } else if (!validNum.test(id) || !validNum.test(price)) {
             setNameError(false)
             setDesErr(false)
             setNum(true)
+            setNameExists(false)
+            setIdExists(false)
+        } else if (TitleExists(title) == true && selectedValue.id == undefined) {
+            setNameError(false)
+            setDesErr(false)
+            setNum(false)
+            setNameExists(true)
+            setIdExists(false)
+        } else if (IdExists(id) == true && selectedValue.id == undefined) {
+            setNameError(false)
+            setDesErr(false)
+            setNum(false)
+            setNameExists(false)
+            setIdExists(true)
         }
         else {
+            setNameExists(false)
+            setIdExists(false)
             setNum(false)
             setNameError(false)
             setDesErr(false)
@@ -399,6 +432,9 @@ export default function Content() {
                         {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 6 - 30 character </div>}
                         {NumError && <div className='text-red-600 ml-11 mb-5 text-xl'>Id or Price Not Number</div>}
                         {phoneErrorr && <div className='text-red-600 ml-11 mb-5 text-xl'>Description 6 - 300 character</div>}
+                        {nameExists && <div className='text-red-600 ml-11 mb-5 text-xl'>Title Exists </div>}
+
+                        {idExists && <div className='text-red-600 ml-11 mb-5 text-xl'>Id Exitsts</div>}
                         {Id}
                         <div className='max-w-5xl my-5 mx-auto'>
                             <Button

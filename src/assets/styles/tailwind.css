@@ -722,6 +722,9 @@ video {
 .mt-32{
 	margin-top: 8rem;
 }
+.ml-64{
+	margin-left: 16rem;
+}
 .block{
 	display: block;
 }
@@ -896,6 +899,9 @@ video {
 }
 .grid-cols-6{
 	grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.grid-cols-4{
+	grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 .flex-col{
 	flex-direction: column;

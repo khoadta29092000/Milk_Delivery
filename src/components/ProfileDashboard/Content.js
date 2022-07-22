@@ -37,10 +37,10 @@ export default function Content() {
         }
     }
     return (
-        <section className=" ml-0 xl:ml-64 mb-0 pt-10  ">
+        <section className=" ml-64 mb-0 pt-10  ">
             <div className=" ml-8 ">
                 <h2 className="font-bold text-2xl mb-2 "> Dashboard</h2>
-                <div className='grid mr-5 grid-cols-1 lg:grid-cols-3 sm:grid-cols-2 2xl:grid-cols-6 gap-4'>
+                <div className='grid mr-5 grid-cols-1  gap-4'>
       
                             <Card  className="" >
                                 <Link to="/profile">

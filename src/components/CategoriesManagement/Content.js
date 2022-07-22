@@ -193,7 +193,16 @@ export default function Content() {
 
     console.log("----------", page, rowsPerPage)
 
-   
+    function TitleExists(title) {
+        return data.some(function (el) {
+            return el.title.toLowerCase() == title.toLowerCase();
+        });
+    }
+    function IdExists(id) {
+        return data.some(function (el) {
+            return el.id == id;
+        });
+    }
 
     const rows1 = data.map((data, index) => {
         return (createData(data))
@@ -252,20 +261,39 @@ async function handleUpload(){
             );
         }
 }
-const [phoneErrorr, setDesErr] = useState(false)
+const [phoneErrorr, setPhoneErrorr] = useState(false)
 const [nameError, setNameError] = useState(false)
 const [message, setMess] = useState(false)
+const [nameExists, setNameExists] = useState(false)
+const [idExists, setIdExists] = useState(false)
     async function handleUpdateOrCreate()  {     
         if (!validName.test(title)) {
             setNameError(true)
-            setDesErr(false)
+            setPhoneErrorr(false)
+            setNameExists(false)
+            setIdExists(false)
         }else if (!validDes.test(description)) {
             setNameError(false)
-            setDesErr(true)
-        } else {
-            
+            setPhoneErrorr(true)
+            setNameExists(false)
+            setIdExists(false)
+        }else if (TitleExists(title) == true && selectedValue.id == undefined) {
             setNameError(false)
-            setDesErr(false)
+            setPhoneErrorr(false)
+            setNameExists(true)
+            setIdExists(false)
+        }else if (IdExists(id) == true && selectedValue.id == undefined) {
+            setNameError(false)
+            setPhoneErrorr(false)
+            setNameExists(false)
+            setIdExists(true)
+        }
+        
+        else {
+            setNameExists(false)
+            setIdExists(false)
+            setNameError(false)
+            setPhoneErrorr(false)
             if(selectedValue.id != undefined){
                 const res = await fetch(`http://www.subcriptionmilk.somee.com/api/Categories/update`, {
                     method: `PUT`,
@@ -395,6 +423,9 @@ const [message, setMess] = useState(false)
                     {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 6 - 30 character </div>}
                     
                     {phoneErrorr && <div className='text-red-600 ml-11 mb-5 text-xl'>Description 6 - 300 character</div>}
+                    {nameExists && <div className='text-red-600 ml-11 mb-5 text-xl'>Title Exists </div>}
+                    
+                    {idExists && <div className='text-red-600 ml-11 mb-5 text-xl'>Id Exitsts</div>}
                         {Id}
                         <div className='max-w-5xl my-5 mx-auto'>
                             <Button
@@ -425,7 +456,7 @@ const [message, setMess] = useState(false)
                             <TextField className='w-96 my-5' onChange={e => setTitle(e.target.value)} defaultValue={selectedValue.title} autoComplete='off' id="outlined-basic" label="Title" variant="outlined" />
                         </div>
                         <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' onChange={e => setDescription(e.target.value)} defaultValue={selectedValue.description} autoComplete='off' id="outlined-basic" label="Title" variant="outlined" />
+                            <TextField className='w-96 my-5' onChange={e => setDescription(e.target.value)} defaultValue={selectedValue.description} autoComplete='off' id="outlined-basic" label="Description" variant="outlined" />
                         </div>
                     </DialogContent>
                     <DialogActions>

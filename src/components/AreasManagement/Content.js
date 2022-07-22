@@ -112,20 +112,20 @@ export default function Content() {
     const [alert, setAlert] = useState(false);
     const validName = new RegExp(/^.{6,30}$/);
     const validDes = new RegExp(/^.{6,300}$/);
-    const body =  {   
-        id: id,         
+    const body = {
+        id: id,
         title: title,
         address: address,
-        description: description,       
+        description: description,
         slotId: slotId
-        
+
     };
-    const bodyCreate =  {   
-          id: id,
-           
+    const bodyCreate = {
+        id: id,
+
         title: title,
         address: address,
-        description: description,       
+        description: description,
         slotId: slotId
     };
     const handleClickOpen = (data) => {
@@ -158,12 +158,12 @@ export default function Content() {
     let Id;
     if (selectedValue.id != undefined) {
         Id = (<div className='max-w-5xl my-5 mx-auto'>
-            <TextField className='w-96 my-5'onChange={e => setId(e.target.value)} defaultValue={selectedValue.id} disabled id="outlined-basic" label="Id" variant="outlined" />
+            <TextField className='w-96 my-5' onChange={e => setId(e.target.value)} defaultValue={selectedValue.id} disabled id="outlined-basic" label="Id" variant="outlined" />
         </div>)
     } else {
         Id = (<div className='max-w-5xl my-5 mx-auto'>
-        <TextField className='w-96 my-5'onChange={e => setId(e.target.value)} defaultValue={selectedValue.id}  id="outlined-basic" label="Id" variant="outlined" />
-    </div>)
+            <TextField className='w-96 my-5' onChange={e => setId(e.target.value)} defaultValue={selectedValue.id} id="outlined-basic" label="Id" variant="outlined" />
+        </div>)
     }
 
     const [page, setPage] = React.useState(0);
@@ -184,165 +184,193 @@ export default function Content() {
         { id: 1, name: "  Morning : 6:30 AM - 7:00 AM", location: "139-141 Nguyễn Gia Trí, P.25, Q.Bình Thạnh, TP. Hồ Chí Minh" },
         { id: 2, name: "Noon : 12:00 AM - 12:30 AM ", location: "161 Xa Lộ Hà Nội, P. Thảo Điền, Q.2, TP. Hồ Chí Minh" },
         { id: 3, name: "Afternoon : 5:30 AM - 6:00 AM ", location: "1311 Ông Cao Thắng, P.Tân Kì, Q.10, TP. Hồ Chí Minh" },
-       
+
     ]
     useEffect(() => {
         featchStationist();
         setPage(0);
-    }, [search] );
+    }, [search]);
 
     async function featchStationist() {
         try {
-    
-         
-          const requestURL = `http://www.subcriptionmilk.somee.com/api/Stations/Getallstations?search=${search}`;
-    
-          const response = await fetch(requestURL, {
-            method: `GET`,
-            headers: {
-              'Content-Type': 'application/json',
-             
-            },
-          });
-          const responseJSON = await response.json();
-    
-          const  data  = responseJSON;
-    
-          setData(responseJSON.data)
-        
-       console.log("aa fetch", responseJSON.data)
-    
+
+
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/Stations/Getallstations?search=${search}`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setData(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
         } catch (error) {
-          console.log('Fail to fetch product list: ', error)
+            console.log('Fail to fetch product list: ', error)
         }
-      }
+    }
+    function TitleExists(title) {
+        return data.some(function (el) {
+            return el.title.toLowerCase() == title.toLowerCase();
+        });
+    }
+    function IdExists(id) {
+        return data.some(function (el) {
+            return el.id == id;
+        });
+    }
 
     const rows1 = data.map((data, index) => {
         return (createData(data))
     })
 
-    const [desErrorr, setDesErrorr] = useState(false)
+    const [desErrorr, setPhoneErrorr] = useState(false)
     const [nameError, setNameError] = useState(false)
     const [message, setMess] = useState(false)
-        async function handleUpdateOrCreate()  {     
-            if (!validName.test(title) || !validName.test(address)  ) {
-                setNameError(true)
-                setDesErrorr(false)
-            }else if (!validDes.test(description)) {
-                setNameError(false)
-                setDesErrorr(true)
-            } else {
-                
-                setNameError(false)
-                setDesErrorr(false)
-                if(selectedValue.id != undefined){
-                    const res = await fetch(`http://www.subcriptionmilk.somee.com/api/Stations/update`, {
-                        method: `PUT`,
-                        headers: {
-                            'Content-Type': 'application/json',
-                           
-                        },
-                        body: JSON.stringify(body)
-                    }).then(res => res.json())
-                        .then(result => {
-            
-                            if (result) {
-                                if (result?.statusCode == 201) {
-                                    setMess("Update Successfullly")
-                                    setAlert(true)
-                                    handleClose();
-                                    featchStationist();
-                                }
-            
-                            } else {
-                                alert("Update UnSuccessfullly")
-                            }
-                            return res
-            
-                        })
-                        .catch((error) => {
-                            throw ('Invalid Token')
-                        })
-                    return body
-                  
-                }else{
-                    const res = await fetch(`http://www.subcriptionmilk.somee.com/api/Stations/create`, {
-                        method: `POST`,
-                        headers: {
-                            'Content-Type': 'application/json',
-                           
-                        },
-                        body: JSON.stringify(bodyCreate)
-                    }).then(res => res.json())
-                        .then(result => {
-            
-                            if (result) {
-                                if (result?.statusCode == 201) {
-                                     setMess("Add Successfullly")
-                                     setAlert(true)
-                                    handleClose();
-                                    featchStationist();
-                                }
-            
-                            } else {
-                                alert("Add UnSuccessfullly")
-                            }
-                            return res
-            
-                        })
-                        .catch((error) => {
-                            throw ('Invalid Token')
-                        })
-                    return body         
-                    }
-                }           
-            }
-            async function handleDelete(data) {
-    
-                let res = await fetch(`http://www.subcriptionmilk.somee.com/api/Stations/${data?.id}`, {
-                    method: `DELETE`,
+    const [nameExists, setNameExists] = useState(false)
+    const [idExists, setIdExists] = useState(false)
+    async function handleUpdateOrCreate() {
+        if (!validName.test(title) || !validName.test(address)) {
+            setNameError(true)
+            setPhoneErrorr(false)
+            setNameExists(false)
+            setIdExists(false)
+        } else if (!validDes.test(description)) {
+            setNameError(false)
+            setPhoneErrorr(true)
+            setNameExists(false)
+            setIdExists(false)
+        } else if (TitleExists(title) == true && selectedValue.id == undefined) {
+            setNameError(false)
+            setPhoneErrorr(false)
+            setNameExists(true)
+            setIdExists(false)
+        } else if (IdExists(id) == true && selectedValue.id == undefined) {
+            setNameError(false)
+            setPhoneErrorr(false)
+            setNameExists(false)
+            setIdExists(true)
+        }
+        else {
+            setNameExists(false)
+            setIdExists(false)
+            setNameError(false)
+            setPhoneErrorr(false)
+            if (selectedValue.id != undefined) {
+                const res = await fetch(`http://www.subcriptionmilk.somee.com/api/Stations/update`, {
+                    method: `PUT`,
                     headers: {
                         'Content-Type': 'application/json',
-                      
+
                     },
+                    body: JSON.stringify(body)
                 }).then(res => res.json())
                     .then(result => {
-        
-                        if (result?.statusCode === 200) {
-                            setMess(result.content)
-                            setAlert(true)
-                            featchStationist();
+
+                        if (result) {
+                            if (result?.statusCode == 201) {
+                                setMess("Update Successfullly")
+                                setAlert(true)
+                                handleClose();
+                                featchStationist();
+                            }
+
                         } else {
-                            alert("delete thất bại")
-                            // setError(result.message)
-                            // alert("tài khoản hoặc mật khẩu sai kìa")
+                            alert("Update UnSuccessfullly")
                         }
                         return res
-        
+
                     })
                     .catch((error) => {
                         throw ('Invalid Token')
                     })
-                return res
+                return body
+
+            } else {
+                const res = await fetch(`http://www.subcriptionmilk.somee.com/api/Stations/create`, {
+                    method: `POST`,
+                    headers: {
+                        'Content-Type': 'application/json',
+
+                    },
+                    body: JSON.stringify(bodyCreate)
+                }).then(res => res.json())
+                    .then(result => {
+
+                        if (result) {
+                            if (result?.statusCode == 201) {
+                                setMess("Add Successfullly")
+                                setAlert(true)
+                                handleClose();
+                                featchStationist();
+                            }
+
+                        } else {
+                            alert("Add UnSuccessfullly")
+                        }
+                        return res
+
+                    })
+                    .catch((error) => {
+                        throw ('Invalid Token')
+                    })
+                return body
             }
-            const handleCloseAlert = (event, reason) => {
-                if (reason === "clickaway") {
-                  return;
+        }
+    }
+    async function handleDelete(data) {
+
+        let res = await fetch(`http://www.subcriptionmilk.somee.com/api/Stations/${data?.id}`, {
+            method: `DELETE`,
+            headers: {
+                'Content-Type': 'application/json',
+
+            },
+        }).then(res => res.json())
+            .then(result => {
+
+                if (result?.statusCode === 200) {
+                    setMess(result.content)
+                    setAlert(true)
+                    featchStationist();
+                } else {
+                    alert("delete thất bại")
+                    // setError(result.message)
+                    // alert("tài khoản hoặc mật khẩu sai kìa")
                 }
-            
-                setAlert(false);
-              };
-              const callbackSearch = (childData) => {
-                setSearch(childData)
-        
-            };
+                return res
+
+            })
+            .catch((error) => {
+                throw ('Invalid Token')
+            })
+        return res
+    }
+    const handleCloseAlert = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+
+        setAlert(false);
+    };
+    const callbackSearch = (childData) => {
+        setSearch(childData)
+
+    };
     return (
         <section className=" ml-0 xl:ml-64  px-5 pt-10  ">
-             <Snackbar open={alert} autoHideDuration={4000} onClose={handleCloseAlert} className="float-left w-screen">
-                    <Alert onClose={handleCloseAlert} severity="success" >
-                        {message}
-                    </Alert>
-                </Snackbar>
+            <Snackbar open={alert} autoHideDuration={4000} onClose={handleCloseAlert} className="float-left w-screen">
+                <Alert onClose={handleCloseAlert} severity="success" >
+                    {message}
+                </Alert>
+            </Snackbar>
             <Paper className=' ' sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableHead >
                     <div className='pt-2 pl-4 block font-semibold text-xl'>
@@ -361,41 +389,44 @@ export default function Content() {
                         Station Detail
                     </BootstrapDialogTitle>
                     <DialogContent dividers >
-                    {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 6 - 30 character </div>}
-                    
-                    {desErrorr && <div className='text-red-600 ml-11 mb-5 text-xl'>Description 6 - 300 character</div>}
+                        {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 6 - 30 character </div>}
+
+                        {desErrorr && <div className='text-red-600 ml-11 mb-5 text-xl'>Description 6 - 300 character</div>}
+                        {nameExists && <div className='text-red-600 ml-11 mb-5 text-xl'>Title Exists </div>}
+
+                        {idExists && <div className='text-red-600 ml-11 mb-5 text-xl'>Id Exitsts</div>}
                         {Id}
-                       
+
                         <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' onChange={e => setTitle(e.target.value)}  defaultValue={selectedValue.title} id="outlined-basic" label="Title" variant="outlined" />
+                            <TextField className='w-96 my-5' onChange={e => setTitle(e.target.value)} defaultValue={selectedValue.title} id="outlined-basic" label="Title" variant="outlined" />
                         </div>
                         <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' onChange={e => setAddress(e.target.value)}  defaultValue={selectedValue.address} autoComplete='off' id="outlined-basic" label="Address" variant="outlined" />
+                            <TextField className='w-96 my-5' onChange={e => setAddress(e.target.value)} defaultValue={selectedValue.address} autoComplete='off' id="outlined-basic" label="Address" variant="outlined" />
                         </div>
                         <div className='max-w-5xl my-5 mx-auto'>
                             <TextField className='w-96 my-5' onChange={e => setDescription(e.target.value)} defaultValue={selectedValue.description} autoComplete='off' id="outlined-basic" label="Description" variant="outlined" />
                         </div>
                         <div className='max-w-5xl my-5 mx-auto'>
-                        <Box sx={{ minWidth: 120 }}>
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-label">Slot</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
-                                    defaultValue={slotId}
-                                    label="Slot"
-                                    onChange={e => setSlotId(e.target.value)}
-                                >
-                         
-                             {slot.map((cate,index) => {
-                                return(
-                                    <MenuItem key={index} value={cate.id}>{cate.name}</MenuItem>
-                                )
-                             })}
-                                  
-                                </Select>
-                            </FormControl>
-                        </Box>
+                            <Box sx={{ minWidth: 120 }}>
+                                <FormControl fullWidth>
+                                    <InputLabel id="demo-simple-select-label">Slot</InputLabel>
+                                    <Select
+                                        labelId="demo-simple-select-label"
+                                        id="demo-simple-select"
+                                        defaultValue={slotId}
+                                        label="Slot"
+                                        onChange={e => setSlotId(e.target.value)}
+                                    >
+
+                                        {slot.map((cate, index) => {
+                                            return (
+                                                <MenuItem key={index} value={cate.id}>{cate.name}</MenuItem>
+                                            )
+                                        })}
+
+                                    </Select>
+                                </FormControl>
+                            </Box>
                         </div>
                     </DialogContent>
                     <DialogActions>
@@ -405,10 +436,10 @@ export default function Content() {
                     </DialogActions>
                 </BootstrapDialog>
                 <div className='pr-5 my-6 float-right'>
-                
-                 
-                 <Search parentCallback={callbackSearch} />
-           
+
+
+                    <Search parentCallback={callbackSearch} />
+
                 </div>
                 <TableContainer sx={{}}>
                     <Table stickyHeader aria-label="sticky table">
@@ -434,7 +465,7 @@ export default function Content() {
                                         <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                                             {columns.map((column) => {
                                                 const value = row[column.id];
-                                   return (
+                                                return (
                                                     <TableCell key={column.id} >
                                                         {value}
                                                     </TableCell>

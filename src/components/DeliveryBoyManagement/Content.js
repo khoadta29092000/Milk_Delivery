@@ -25,7 +25,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import { useEffect, useState } from "react";
 import Search from 'components/Search';
-import {ref, getDownloadURL, uploadBytesResumable} from "firebase/storage"
+import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage"
 import { storage } from 'firebase';
 import { v4 } from "uuid";
 import Snackbar from '@material-ui/core/Snackbar';
@@ -129,19 +129,19 @@ export default function Content() {
     };
     const validName = new RegExp(/^.{6,3000}$/);
     const validPhone = new RegExp(/(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/);
-    const body =  {   
-        id: id,         
+    const body = {
+        id: id,
         fullName: fullName,
         username: userName,
-        password: password,       
+        password: password,
         phone: phone,
         img: img
     };
-    const bodyCreate =  {   
-          
+    const bodyCreate = {
+
         fullName: fullName,
         username: userName,
-        password: password,       
+        password: password,
         phone: phone,
         img: img
     };
@@ -149,12 +149,12 @@ export default function Content() {
         setOpen(false);
         setSelectedImage(undefined);
         SetClick(false);
-        
+
     };
     useEffect(() => {
         featchDeliveryManList();
         setPage(0);
-    }, [search] );
+    }, [search]);
     function createData(data) {
 
         let UserName = data.username;
@@ -169,8 +169,8 @@ export default function Content() {
                             state: {
                                 name: data.id
                             }
-                        }} className=""> 
-                      <RemoveRedEyeIcon />
+                        }} className="">
+                        <RemoveRedEyeIcon />
                     </Link>
                 </button>
                 <button className="text-white mx-2  outline-none bg-blue-600 rounded-lg   h-8 w-8" onClick={() => handleClickOpen(data)}>
@@ -201,7 +201,7 @@ export default function Content() {
         setPage(0);
     };
     function handleSearchTermChange(newFilters) {
-   
+
         setFilters({
             ...filters,
             page: 1,
@@ -215,96 +215,116 @@ export default function Content() {
 
     async function featchDeliveryManList() {
         try {
-    
-         
-          const requestURL = `http://www.subcriptionmilk.somee.com/api/DeliveryMen?search=${search}`;
-    
-          const response = await fetch(requestURL, {
-            method: `GET`,
-            headers: {
-              'Content-Type': 'application/json',
-             
-            },
-          });
-          const responseJSON = await response.json();
-    
-          const  data  = responseJSON;
-    
-          setData(responseJSON.data)
-        
-       console.log("aa fetch", responseJSON.data)
-    
-        } catch (error) {
-          console.log('Fail to fetch product list: ', error)
-        }
-      }
 
-      console.log("aa fetch", data)
-    
+
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/DeliveryMen?search=${search}`;
+
+            const response = await fetch(requestURL, {
+                method: `GET`,
+                headers: {
+                    'Content-Type': 'application/json',
+
+                },
+            });
+            const responseJSON = await response.json();
+
+            const data = responseJSON;
+
+            setData(responseJSON.data)
+
+            console.log("aa fetch", responseJSON.data)
+
+        } catch (error) {
+            console.log('Fail to fetch product list: ', error)
+        }
+    }
+
+    console.log("aa fetch", data)
+
     let Id;
     if (id != undefined) {
         Id = (<div className='max-w-5xl my-5 mx-auto'>
-            <TextField className='w-96 my-5' defaultValue={id}  onChange={e => setId(e.target.value)} disabled id="outlined-basic" label="Id" variant="outlined" />
+            <TextField className='w-96 my-5' defaultValue={id} onChange={e => setId(e.target.value)} disabled id="outlined-basic" label="Id" variant="outlined" />
         </div>)
     } else {
-        
+
     }
 
 
     console.log("----------", page, rowsPerPage)
+
+
+    function UsernameExists(username) {
+        return data.some(function (el) {
+            return el.username == username;
+        });
+    }
 
     const rows1 = data.map((data, index) => {
         return (createData(data))
     })
     const [progresspercent, setProgresspercent] = useState(0);
 
-async function handleUpload(){
-    if(click == false){setImg(selectedImage)}
-        else{
-            const storageRef =  ref(storage, `deliveryman/${selectedImage.name + v4()}`);
-            const uploadTask =  uploadBytesResumable(storageRef, selectedImage);
-              uploadTask.on("state_changed",
-              (snapshot) => {
-                const progress =
-                  Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-                setProgresspercent(progress);
-              },
-              (error) => {
-                alert(error);
-              },
-              () => {
-                  getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>  {
-                setImg(downloadURL)
-                });
-              }
+    async function handleUpload() {
+        if (click == false) { setImg(selectedImage) }
+        else {
+            const storageRef = ref(storage, `deliveryman/${selectedImage.name + v4()}`);
+            const uploadTask = uploadBytesResumable(storageRef, selectedImage);
+            uploadTask.on("state_changed",
+                (snapshot) => {
+                    const progress =
+                        Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+                    setProgresspercent(progress);
+                },
+                (error) => {
+                    alert(error);
+                },
+                () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        setImg(downloadURL)
+                    });
+                }
             );
         }
-}
-const [phoneErrorr, setPhoneErrorr] = useState(false)
-const [nameError, setNameError] = useState(false)
-const [message, setMess] = useState(false)
-    async function handleUpdateOrCreate()  {     
-        if (!validName.test(fullName) || !validName.test(password)  || !validName.test(userName)) {
+    }
+    const [phoneErrorr, setPhoneErrorr] = useState(false)
+    const [nameError, setNameError] = useState(false)
+    const [message, setMess] = useState(false)
+    const [nameExists, setNameExists] = useState(false)
+
+    async function handleUpdateOrCreate() {
+        if (!validName.test(fullName) || !validName.test(password) || !validName.test(userName)) {
             setNameError(true)
             setPhoneErrorr(false)
-        }else if (!validPhone.test(phone)) {
+            setNameExists(false)
+
+        } else if (!validPhone.test(phone)) {
             setNameError(false)
             setPhoneErrorr(true)
-        } else {
-            
+            setNameExists(false)
+
+        }
+        else if (UsernameExists(userName) == true && selectedValue.id == undefined) {
             setNameError(false)
             setPhoneErrorr(false)
-            if(selectedValue.id != undefined){
+            setNameExists(true)
+        }
+        else {
+            setNameError(false)
+            setPhoneErrorr(false)
+            setNameExists(false)
+
+            if (selectedValue.id != undefined) {
                 const res = await fetch(`http://www.subcriptionmilk.somee.com/api/DeliveryMen/update`, {
                     method: `PUT`,
                     headers: {
                         'Content-Type': 'application/json',
-                       
+
                     },
                     body: JSON.stringify(body)
                 }).then(res => res.json())
                     .then(result => {
-        
+
                         if (result) {
                             if (result?.statusCode == 201) {
                                 setMess("Update Successfullly")
@@ -312,93 +332,93 @@ const [message, setMess] = useState(false)
                                 handleClose();
                                 featchDeliveryManList();
                             }
-        
+
                         } else {
                             alert("Update UnSuccessfullly")
                         }
                         return res
-        
+
                     })
                     .catch((error) => {
                         throw ('Invalid Token')
                     })
                 return body
-              
-            }else{
+
+            } else {
                 const res = await fetch(`http://www.subcriptionmilk.somee.com/api/DeliveryMen/create`, {
                     method: `POST`,
                     headers: {
                         'Content-Type': 'application/json',
-                       
+
                     },
                     body: JSON.stringify(bodyCreate)
                 }).then(res => res.json())
                     .then(result => {
-        
+
                         if (result) {
                             if (result?.statusCode == 201) {
-                                 setMess("Add Successfullly")
-                                 setAlert(true)
+                                setMess("Add Successfullly")
+                                setAlert(true)
                                 handleClose();
                                 featchDeliveryManList();
                             }
-        
+
                         } else {
                             alert("Add UnSuccessfullly")
                         }
                         return res
-        
+
                     })
                     .catch((error) => {
                         throw ('Invalid Token')
                     })
-                return body         
-                }
-            }           
-        }
-        async function handleDelete(data) {
-
-            let res = await fetch(`http://www.subcriptionmilk.somee.com/api/DeliveryMen/${data?.id}`, {
-                method: `DELETE`,
-                headers: {
-                    'Content-Type': 'application/json',
-                  
-                },
-            }).then(res => res.json())
-                .then(result => {
-    
-                    if (result?.statusCode === 200) {
-                        setMess(result.content)
-                        setAlert(true)
-                        featchDeliveryManList();
-                    } else {
-                        alert("delete thất bại")
-                        // setError(result.message)
-                        // alert("tài khoản hoặc mật khẩu sai kìa")
-                    }
-                    return res
-    
-                })
-                .catch((error) => {
-                    throw ('Invalid Token')
-                })
-            return res
-        }
-        const handleCloseAlert = (event, reason) => {
-            if (reason === "clickaway") {
-              return;
+                return body
             }
-        
-            setAlert(false);
-          };
-console.log("selected img", selectedValue.id)
+        }
+    }
+    async function handleDelete(data) {
+
+        let res = await fetch(`http://www.subcriptionmilk.somee.com/api/DeliveryMen/${data?.id}`, {
+            method: `DELETE`,
+            headers: {
+                'Content-Type': 'application/json',
+
+            },
+        }).then(res => res.json())
+            .then(result => {
+
+                if (result?.statusCode === 200) {
+                    setMess(result.content)
+                    setAlert(true)
+                    featchDeliveryManList();
+                } else {
+                    alert("delete thất bại")
+                    // setError(result.message)
+                    // alert("tài khoản hoặc mật khẩu sai kìa")
+                }
+                return res
+
+            })
+            .catch((error) => {
+                throw ('Invalid Token')
+            })
+        return res
+    }
+    const handleCloseAlert = (event, reason) => {
+        if (reason === "clickaway") {
+            return;
+        }
+
+        setAlert(false);
+    };
+    console.log("selected img", selectedValue.id)
     return (
         <section className=" ml-0 xl:ml-64  px-5 pt-10  ">
-              <Snackbar open={alert} autoHideDuration={4000} onClose={handleCloseAlert} className="float-left w-screen">
-                    <Alert onClose={handleCloseAlert} severity="success" >
-                        {message}
-                    </Alert>
-                </Snackbar>
+            <Snackbar open={alert} autoHideDuration={4000} onClose={handleCloseAlert} className="float-left w-screen">
+                <Alert onClose={handleCloseAlert} severity="success" >
+                    {message}
+                </Alert>
+            </Snackbar>
             <Paper className='' sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableHead >
                     <div className='pt-2 pl-4 block font-semibold text-xl'>
@@ -417,42 +437,43 @@ console.log("selected img", selectedValue.id)
                         Add Delivery Boy
                     </BootstrapDialogTitle>
                     <DialogContent dividers >
-                    {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 6-30 character </div>}
-                    
-                    {phoneErrorr && <div className='text-red-600 ml-11 mb-5 text-xl'>phone must be valid</div>}
-               
-                       {Id}
-                       <div className='max-w-5xl my-5 mx-auto'>
+                        {nameError && <div className='text-red-600 ml-11 mb-5 text-xl'>Text 6-30 character </div>}
+                        {nameExists && <div className='text-red-600 ml-11 mb-5 text-xl'>Name Exists </div>}
+
+                        {phoneErrorr && <div className='text-red-600 ml-11 mb-5 text-xl'>phone must be valid</div>}
+
+                        {Id}
+                        <div className='max-w-5xl my-5 mx-auto'>
                             <Button
                                 variant="contained"
                                 component="label"
-                                className='bg-blue-600 text-white rounded-md ml-5 my-6 py-2 px-4' 
+                                className='bg-blue-600 text-white rounded-md ml-5 my-6 py-2 px-4'
                             >
                                 Upload Image
                                 <input
                                     type="file"
                                     hidden
-                                    
+
                                     onChange={(event) => {
                                         setSelectedImage(event.target.files[0]);
                                         SetClick(true);
-                                      
+
                                     }}
                                 />
                             </Button>
-                     
+
                         </div>
                         <div className='max-w-5xl my-5 mx-auto'>
-                            {selectedImage == undefined ? <div></div> : <img  alt="" className='mx-auto h-48 w-48 my-5' src={click == false ? selectedValue.img : window.URL.createObjectURL(selectedImage)} />}
+                            {selectedImage == undefined ? <div></div> : <img alt="" className='mx-auto h-48 w-48 my-5' src={click == false ? selectedValue.img : window.URL.createObjectURL(selectedImage)} />}
                         </div>
-                        <Button  variant="contained"
-                                component="label"
-                    
-                                onClick={handleUpload} className='bg-blue-600 text-white rounded-md ml-5 my-6 py-2 px-4' >
-                  Save Img
-                </Button>                                                                           
+                        <Button variant="contained"
+                            component="label"
+
+                            onClick={handleUpload} className='bg-blue-600 text-white rounded-md ml-5 my-6 py-2 px-4' >
+                            Save Img
+                        </Button>
                         <div className='max-w-5xl my-5 mx-auto'>
-                            <TextField className='w-96 my-5' onChange={e => setFullName(e.target.value)}  defaultValue={selectedValue.fullName} id="outlined-basic" label="Full Name" variant="outlined" />
+                            <TextField className='w-96 my-5' onChange={e => setFullName(e.target.value)} defaultValue={selectedValue.fullName} id="outlined-basic" label="Full Name" variant="outlined" />
                         </div>
                         <div className='max-w-5xl my-5 mx-auto'>
                             <TextField className='w-96 my-5' onChange={e => setUserName(e.target.value)} defaultValue={selectedValue.username} autoComplete='off' id="outlined-basic" label="Username" variant="outlined" />
@@ -465,14 +486,14 @@ console.log("selected img", selectedValue.id)
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        <Button  onClick={handleUpdateOrCreate}>
-                           
+                        <Button onClick={handleUpdateOrCreate}>
+
                             Save
                         </Button>
                     </DialogActions>
                 </BootstrapDialog>
                 <div className='pr-5 my-6 float-right'>
-                 
+
                     <Search parentCallback={callbackSearch} />
                 </div>
                 <TableContainer sx={{}}>
