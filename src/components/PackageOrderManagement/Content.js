@@ -115,7 +115,7 @@ export default function Content() {
     }
     async function featchPackageOrderList() {
         try {
-            const requestURL = `http://www.subcriptionmilk.somee.com/api/PackageOrders/Getallpackageorder`;
+            const requestURL = `http://www.subcriptionmilk.somee.com/api/PackageOrders/Getallpackageorder?search=${search}`;
 
             const response = await fetch(requestURL, {
                 method: `GET`,
