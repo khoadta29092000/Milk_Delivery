@@ -39,6 +39,11 @@ const columns = [
         minWidth: 150,
     },
     {
+        id: 'Slot',
+        label: 'Slot',
+        minWidth: 150,
+    },
+    {
         id: 'Status',
         label: 'Status',
         minWidth: 150,
@@ -62,9 +67,14 @@ export default function Content(props) {
     const [dataOrder, setDataOrder] = useState([]);
     const [dataPackageorder, setDataPackageorder] = useState([]);
     function createData(data) {
-        console.log("đasadsadas", data)
+        console.log("đasadsadas", data.slotId)
         let OrderId = data.id;
-
+        let Slot ;
+        dataSlot.map(item => {
+            if(item.id == data.slotId){
+                return Slot = item.name
+            }
+        })
         let Username;
         dataPackageorder.map(item => {
             if (data.pacakeOrderId == item.id) {
@@ -96,8 +106,13 @@ export default function Content(props) {
         let CompletedAt = data.day.slice(8, 10) + "/" + data.day.slice(5, 7) + "/" + data.day.slice(0, 4);;
 
 
-        return { OrderId, Username, PackageName, Area, Status, CompletedAt };
-    }
+        return { OrderId, Username, PackageName, Area, Slot, Status, CompletedAt };
+    }const dataSlot = [
+        { id: 1, name: "  Morning ", location: "139-141 Nguyễn Gia Trí, P.25, Q.Bình Thạnh, TP. Hồ Chí Minh" },
+        { id: 2, name: "Noon ", location: "161 Xa Lộ Hà Nội, P. Thảo Điền, Q.2, TP. Hồ Chí Minh" },
+        { id: 3, name: "Afternoon", location: "1311 Ông Cao Thắng, P.Tân Kì, Q.10, TP. Hồ Chí Minh" },
+       
+    ]
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
@@ -114,7 +129,7 @@ export default function Content(props) {
     const filterListOrder = [];
     data.map(item => {
         dataOrder.filter(order => {
-            if (item.id == order.deliveryTripId) {
+            if (item.id == order.deliveryTripId ) {
                 return filterListOrder.push(order)
             }
         })
@@ -301,12 +316,10 @@ export default function Content(props) {
             <Paper className='5' sx={{ width: '100%', overflow: 'hidden' }}>
                 <TableHead >
                     <div className='pt-2 pl-4 block font-semibold text-xl'>
-                        Areas Management
+                       Trip For Delivery Man
                     </div>
                 </TableHead>
-                <button className='bg-blue-600 text-white rounded-md ml-5 my-6 py-2 px-4'>
-                    Add Areas
-                </button>
+               
 
                 <TableContainer sx={{}}>
                     <Table stickyHeader aria-label="sticky table">
